@@ -4,11 +4,9 @@
 **/
 var app = angular.module('interactomeApp')
 
-app.controller('MainCtrl', function($scope, $rootScope, UserService, AwsService, SearchService) {
 
-    $scope.abstractTargets = [];
-    $scope.absRecd = null;
-    // This function sets the user authentication from googleSignin directive. 
+app.controller('TopCtrl', function($scope, $rootScope, UserService, AwsService, SearchService) {
+
     $scope.signedIn = function(oauth) {
         // Google authentication passed into userService to hold onto and track user.
         UserService.setCurrentUser(oauth)
@@ -16,6 +14,23 @@ app.controller('MainCtrl', function($scope, $rootScope, UserService, AwsService,
                 $scope.user = user;
             });
     };
+});
+
+
+app.controller('MainCtrl', function($scope, $rootScope, UserService, AwsService, SearchService) {
+
+    $scope.abstractTargets = [];
+    $scope.absRecd = null;
+    // This function sets the user authentication from googleSignin directive. 
+    /* 
+    $scope.signedIn = function(oauth) {
+        // Google authentication passed into userService to hold onto and track user.
+        UserService.setCurrentUser(oauth)
+            .then(function(user) {
+                $scope.user = user;
+            });
+    };
+    */
     // Determines what happens after one or more abstract is selected
     $scope.abstractsRec = function() {
         var abstractsChecked = ''
@@ -49,6 +64,6 @@ app.controller('MainCtrl', function($scope, $rootScope, UserService, AwsService,
 app.controller('SearchCtrl', function($scope, $rootScope, UserService, AwsService, SearchService) {
 
     var author = $scope.searchByAuthor;
-    $scope.dbStatus = SearchService.showResults(author);
+    $scope.showAuthor = SearchService.showResults(author);
 
 });

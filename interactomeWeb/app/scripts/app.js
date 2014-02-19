@@ -28,25 +28,23 @@ app.config(
             templateUrl: 'views/main.html',
             controller: 'MainCtrl'
         })
-            .when('/searchView', {
+            .when('searchView', {
                 templateUrl: 'views/searchView.html',
                 controller: 'SearchCtrl'
-
-
             })
-        /*
             .otherwise({
-                redirectTo: 'views/main.html',
-                controller: 'MainCtrl'
+                redirectTo: '/'
             });
-*/
     });
+
 
 window.onLoadCallback = function() {
     // When the document is ready
+    console.log("here yo");
     angular.element(document).ready(function() {
         // Bootstrap the oauth2 library, a google thing for keeping track of authentication. 
         gapi.client.load('oauth2', 'v2', function() {
+            console.log("here");
             // Finally, bootstrap our angular app
             angular.bootstrap(document, ['interactomeApp']);
         });
