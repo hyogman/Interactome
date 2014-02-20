@@ -142,10 +142,14 @@ app.provider('AwsService', function() {
 
 app.service('SearchService', function() {
 
-    this.showResults = function(authorName) {
+    this.showResults = function(institution) {
+
+
+        var instiName = [];
         var db = new AWS.DynamoDB();
         var params = {
             TableName: 'User',
+            institutionName: 'institution',
         }
 
 
@@ -153,11 +157,11 @@ app.service('SearchService', function() {
             if (err) {
                 console.log(err);
             } else {
-
+                instiName = data
             }
         });
 
-        return "oh herro";
+        return instiName;
     }
 });
 

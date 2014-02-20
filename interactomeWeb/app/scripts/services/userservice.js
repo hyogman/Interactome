@@ -18,9 +18,6 @@ angular.module('interactomeApp.Userservice', [])
             if (u && !u.error) {
                 service._user = u;
                 AwsService.setToken(u.id_token);
-
-                return service.currentUser();
-
             } else {
                 // If google authentication has error the promise is defered and rejected, 
                 // think of this as throwing an error in Javascript. 

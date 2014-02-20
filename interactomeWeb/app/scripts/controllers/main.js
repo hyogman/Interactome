@@ -5,7 +5,8 @@
 var app = angular.module('interactomeApp')
 
 
-app.controller('TopCtrl', function($scope, $rootScope, UserService, AwsService, SearchService) {
+// This controller deals with google sign on top of page 
+app.controller('TopCtrl', function($scope, UserService, AwsService, SearchService) {
 
     $scope.signedIn = function(oauth) {
         // Google authentication passed into userService to hold onto and track user.
@@ -17,7 +18,7 @@ app.controller('TopCtrl', function($scope, $rootScope, UserService, AwsService, 
 });
 
 
-app.controller('MainCtrl', function($scope, $rootScope, UserService, AwsService, SearchService) {
+app.controller('MainCtrl', function($scope, UserService, AwsService, SearchService) {
 
     $scope.abstractTargets = [];
     $scope.absRecd = null;
@@ -61,9 +62,11 @@ app.controller('MainCtrl', function($scope, $rootScope, UserService, AwsService,
 
 });
 
-app.controller('SearchCtrl', function($scope, $rootScope, UserService, AwsService, SearchService) {
+app.controller('SearchCtrl', function($scope, UserService, AwsService, SearchService) {
 
-    var author = $scope.searchByAuthor;
-    $scope.showAuthor = SearchService.showResults(author);
+
+    var institution = [];
+    institution = $scope.institution;
+    $scope.institution = SearchService.showResults(institution);
 
 });
