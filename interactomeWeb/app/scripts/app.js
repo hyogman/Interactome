@@ -20,22 +20,21 @@ app.config(function(AwsServiceProvider) {
 
 
 // Sets up main route to main.html when page is first loaded. 
-app.config(
-    function($routeProvider) {
-        $routeProvider
-
-        .when('/', {
-            templateUrl: 'views/main.html',
-            controller: 'MainCtrl'
+app.config(function($routeProvider) {
+    $routeProvider.when('/', {
+        templateUrl: 'views/main.html',
+        controller: 'MainCtrl'
+    })
+        .when('/searchView', {
+            templateUrl: 'views/searchView.html',
+            controller: 'SearchCtrl'
         })
-            .when('searchView', {
-                templateUrl: 'views/searchView.html',
-                controller: 'SearchCtrl'
-            })
-            .otherwise({
-                redirectTo: '/'
-            });
-    });
+        .otherwise({
+            redirectTo: '/'
+        });
+});
+
+
 
 
 window.onLoadCallback = function() {
