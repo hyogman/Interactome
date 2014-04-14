@@ -16,10 +16,10 @@ angular.module('interactomeApp.RecommendationService', [])
 
                 var limit = 100 + abstractList.length; // min of abstracts needed to make sure no duplicates returnedPapers
 
-
+                //'/recsys/views/recs'
                 $http({
                     method: 'GET',
-                    url: '/recsys/views/hello/'
+                    url: 'http://127.0.0.1:8000/recs/'
                 }).
                 success(function(data, status, headers, config) {
                     // this callback will be called asynchronously

@@ -17,6 +17,9 @@ app.config(function(AwsServiceProvider) {
             'arn:aws:iam::005837367462:role/interactomeRole');
 });
 
+app.config(function($httpProvider) {
+    delete $httpProvider.defaults.headers.common['X-Requested-With'];
+});
 
 
 // Sets up main route to main.html when page is first loaded. 
