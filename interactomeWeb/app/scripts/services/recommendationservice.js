@@ -19,7 +19,7 @@ angular.module('interactomeApp.RecommendationService', [])
 
                 $http({
                     method: 'GET',
-                    url: '/recsys/views/home'
+                    url: '/recsys/views/hello/'
                 }).
                 success(function(data, status, headers, config) {
                     // this callback will be called asynchronously
