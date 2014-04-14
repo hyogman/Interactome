@@ -16,6 +16,7 @@ angular.module('interactomeApp.RecommendationService', [])
 
                 var limit = 100 + abstractList.length; // min of abstracts needed to make sure no duplicates returnedPapers
 
+
                 $http({
                     method: 'GET',
                     url: '/recsys/views/home'
