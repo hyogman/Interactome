@@ -8,7 +8,6 @@ var app = angular.module('interactomeApp', [
     'interactomeApp.Userservice',
     'interactomeApp.RecommendationService',
     'ui.bootstrap'
-
 ])
 
 // Sets our AWS arn on config through Awsservice
@@ -30,7 +29,7 @@ app.config(
             controller: 'MainCtrl'
         })
             .when('/searchView', {
-                templateUrl: 'views/searchView.html',
+                templateUrl: 'views/searchview.html',
                 controller: 'SearchCtrl'
 
 

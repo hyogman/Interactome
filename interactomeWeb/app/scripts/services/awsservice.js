@@ -1,16 +1,7 @@
 'use strict';
 /**
     This service handles the AWS resources. Setting or getting, should be through this API.
-
-
-var app = angular.module('interactomeApp.Awsservice', []);
-
-
-// creating service type provider. Provider used to configure service before app runs. 
-app.provider('AwsService', function() {
-
-    I decided to use an observer pattern for notifying subscribers instead of $watch and $digest. I couldn't seem to get them to bind correctly
-    when trying to use the mainCtrl. The observer pattern is slightly more wordy
+    
 **/
 var app = angular.module('interactomeApp.AwsService', [])
 
@@ -29,12 +20,11 @@ app.provider('AwsService', function() {
         if (region) AWS.config.region = region;
     }
 
-
-
     self.$get = function($q, $cacheFactory, $http, $rootScope) {
         var _TOKENBROADCAST = 'tokenSet@AwsService';
         var credentialsDefer = $q.defer();
         var credentialsPromise = credentialsDefer.promise;
+        var DynamoTopics = [];
         var _SNSTopics = {};
         return {
 
@@ -63,6 +53,173 @@ app.provider('AwsService', function() {
                 self._lastEvalKey = null;
                 $rootScope.$broadcast(_TOKENBROADCAST);
             }, // end of setToken func 
+
+            // Gets topics from dynamo table, currently paper Id's
+            // Should eventually return paper Names and/or links
+            getTopics: function(username) {
+                var topicDefer = $q.defer();
+                var dynamodb = new AWS.DynamoDB(); // should we catch error for this too?
+                var params = {
+                    TableName: 'Topic',
+                    Select: 'ALL_ATTRIBUTES',
+                    IndexName: 'User-index',
+                    KeyConditions: {
+                        User: {
+                            ComparisonOperator: 'EQ',
+                            AttributeValueList: [
+                                {
+                                    S: username
+                                }
+                            ]
+                        }
+                    }
+                }
+                var topicsArray = []; // list of dictionaries
+                dynamodb.query(params, function(err, data) {
+                    if (err) {
+                        console.log(err, err.stack);
+                        topicDefer.reject('Cannot query Topic table');
+                    }
+                    else {
+                        for(var i = 0; i < data.Count; i++) { // loop through all Topic entrees
+                            if('List' in data.Items[i]) { // add paper array to topics array if exists
+                                var papersArray = data.Items[i]['List']['SS'];
+                                topicsArray.push({
+                                    Name: data.Items[i]['Name']['S'],
+                                    PapersList: papersArray
+                                });
+                            }
+                            else {
+                                topicsArray.push({
+                                    Name: data.Items[i]['Name']['S'] 
+                                });
+                            }
+                        }
+                        topicsArray.sort(function(a,b) {
+                            return (a['Name'].localeCompare(b['Name'], 'kn', {numeric: true, caseFirst: "lower", usage: "sort"}) >= 0);
+                        });
+                        topicDefer.resolve(topicsArray);
+                    }
+                });
+                return topicDefer.promise;
+            },
+
+            // puts new Topic item into Dynamo
+            _putNewTopic: function(username, topicname) { // private
+                var defer = $q.defer();
+                var dynamodb = new AWS.DynamoDB();
+
+                // params to update & get new Sequence from Sequencer table
+                var sequenceParams = {
+                    TableName: 'Sequencer',
+                    AttributeUpdates: {
+                        Sequence: {
+                            Action: 'ADD',
+                            Value: {
+                                N: '1',
+                            },
+                        },
+                    },
+                    Key: {
+                        Id: {
+                            N: '1',
+                        }
+                    },
+                    ReturnValues: 'UPDATED_NEW',
+                };
+                var seq = "";
+
+                // call update to Sequencer
+                dynamodb.updateItem(sequenceParams, function(err, data) {
+                    if (err) {
+                        console.log(err, err.stack);
+                        defer.reject('Cannot update Sequencer');
+                    }
+                    else {
+                        seq = data.Attributes['Sequence']['N'];
+
+                        // params to put new item into Topics
+                        var putParams = {
+                            Item: {
+                                Id: {
+                                    S: 'Topic' + seq
+                                },
+                                Name: {
+                                    S: topicname
+                                },
+                                User: {
+                                    S: username
+                                }
+                            },
+                            TableName: 'Topic'
+                        };
+
+                        // call update to Topic
+                        dynamodb.putItem(putParams, function(err, data) {
+                            if (err) {
+                                console.log(err, err.stack);
+                                defer.reject('Cannot put Topic item');
+                            }
+                            else {
+                                defer.resolve();
+                            }
+                        });
+                    }
+                });
+                return defer.promise;
+            },
+
+            // Adds topic to Dynamo Topic table
+            addTopic: function(username, topicName) {
+                var topicDefer = $q.defer();
+                var dynamodb = new AWS.DynamoDB();
+                var self = this;
+
+                // params for query table for existing topic
+                var params = {
+                    TableName: 'Topic',
+                    IndexName: 'User-index',
+                    Select: 'COUNT',
+                    KeyConditions: {
+                        User: {
+                            ComparisonOperator: 'EQ',
+                            AttributeValueList: [
+                                {
+                                    'S': username,
+                                }
+                            ],
+                        },
+                        Name: {
+                            ComparisonOperator: 'EQ',
+                            AttributeValueList: [
+                                {
+                                    'S': topicName,
+                                },
+                            ],
+                        }
+                    },
+                };
+
+                dynamodb.query(params, function(err, data) {
+                    if (err) { // query error
+                        console.log(err, err.stack);
+                        topicDefer.reject('Cannot query Topic table');
+                    }
+                    else if (data.Count == 0) { // if topic doesn't exist, add it
+                        self._putNewTopic(username,topicName).then(function() {
+                            topicDefer.resolve();
+                        }, function(reason) {
+                            topicDefer.reject(reason);
+                        });
+                        
+                    }
+                    else { // if exists, don't add
+                        topicDefer.reject("Topic already exists");
+                    }
+                });
+
+                return topicDefer.promise;
+            },
 
             // Gets the next limit number of papers from dynamo
             // This will eventually be done using the rec service (instead of scanning)
