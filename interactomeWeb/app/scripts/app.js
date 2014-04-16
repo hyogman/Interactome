@@ -17,9 +17,14 @@ app.config(function(AwsServiceProvider) {
             'arn:aws:iam::005837367462:role/interactomeRole');
 });
 
+
+
+// Settings to send data similar to jquery serialization for ease of use 
 app.config(function($httpProvider) {
-    delete $httpProvider.defaults.headers.common['X-Requested-With'];
+    $httpProvider.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded;charset=utf-8';
 });
+
+
 
 
 // Sets up main route to main.html when page is first loaded. 
