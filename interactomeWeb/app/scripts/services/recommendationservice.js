@@ -46,15 +46,27 @@ angular.module('interactomeApp.RecommendationService', [])
                 }
 
 
-                //$scope.save_result = $http.post('http://127.0.0.1:8000/recs/', $.param(abstractList));
+                /*
+                $http.post('http://127.0.0.1:8000/recs/', {
+                    query: returnedPapers
+                }).
+                success(function(data, status) {
+                    window.alert('success');
 
-
-
+                }).error(function(data, status) {
+                    window.alert('fail');
+                });
+                */
 
                 $http({
                     method: 'POST',
                     url: 'http://127.0.0.1:8000/recs/',
-                    data: 'test=abstractList'
+                    data: $.param(
+                        abstractList
+                    ),
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
+                    }
                 }).success(function(data, status, headers, config) {
                     // this callback will be called asynchronously
                     // when the response is available

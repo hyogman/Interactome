@@ -20,8 +20,21 @@ app.config(function(AwsServiceProvider) {
 
 
 // Settings to send data similar to jquery serialization for ease of use 
-app.config(function($httpProvider) {
-    $httpProvider.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded;charset=utf-8';
+app.config(function($routeProvider, $httpProvider) {
+    //$httpProvider.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded;charset=utf-8';
+    // Change default header content type for post request
+    $httpProvider.defaults.headers.post = {
+        'Content-Type': 'application/x-www-form-urlencoded'
+    };
+
+    // Transform every request to form urlencoded data
+    $httpProvider.defaults.transformRequest = function(data) {
+        if (data === undefined) {
+            return data;
+        }
+        // Jquery rescue !!!!!
+        return $.param(data);
+    };
 });
 
 
