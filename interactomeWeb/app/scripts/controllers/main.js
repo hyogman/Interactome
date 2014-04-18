@@ -24,9 +24,6 @@ app.controller('MainCtrl', function($scope, $rootScope, UserService, AwsService,
     $scope.likes = [];
     $scope.dislikes = [];
 
-    $scope.numPages = function() {
-        return Math.ceil($scope.papers.length / $scope.numPerPage);
-    };
 
     $scope.$watch('currentPage + numPerPage + papers', function() {
         // Setting currentPage to 0 is a hack to get the recs working on page 1.
@@ -114,7 +111,6 @@ app.controller('HeaderCtrl', function($scope, $rootScope, $timeout, $location, U
     
     $scope.userTopics = [];
     $scope.newTopic = null;
-
     // This function sets the user authentication from googleSignin directive. 
     $scope.signedIn = function(oauth) {
         // Google authentication passed into userService to hold onto and track user.
