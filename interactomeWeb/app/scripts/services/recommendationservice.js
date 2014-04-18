@@ -37,7 +37,9 @@ angular.module('interactomeApp.RecommendationService', [])
                                 if (abstractList.indexOf(paperId) == -1) // not in list sent in
                                     returnedPapers.push({
                                         Id: paperId,
-                                        Link: data.Items[i].Link.S
+                                        Link: data.Items[i].Link.S,
+                                        Title: data.Items[i].Title.S,
+                                        Authors: data.Items[i].Authors.SS
                                     })
                             }
                             defered.resolve(returnedPapers);
