@@ -48,32 +48,18 @@ angular.module('interactomeApp.RecommendationService', [])
                 }
 
 
-                /*
-                $http.post('http://127.0.0.1:8000/recs/', {
-                    query: returnedPapers
-                }).
-                success(function(data, status) {
-                    window.alert('success');
 
-                }).error(function(data, status) {
-                    window.alert('fail');
-                });
-                */
-
+                // running simple get request
                 $http({
-                    method: 'POST',
-                    url: 'http://127.0.0.1:8000/recs/',
-                    data: $.param(
-                        abstractList
-                    ),
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
-                    }
-                }).success(function(data, status, headers, config) {
+                    method: 'GET',
+                    url: 'http://127.0.0.1:8000/recs/'
+                }).
+                success(function(data, status, headers, config) {
                     // this callback will be called asynchronously
                     // when the response is available
                     window.alert("success");
-                }).error(function(data, status, headers, config) {
+                }).
+                error(function(data, status, headers, config) {
                     // called asynchronously if an error occurs
                     // or server returns response with an error status.
                     window.alert("fail");

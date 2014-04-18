@@ -19,26 +19,13 @@ app.config(function(AwsServiceProvider) {
 
 
 
-// Settings to send data similar to jquery serialization for ease of use 
-app.config(function($routeProvider, $httpProvider) {
-    //$httpProvider.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded;charset=utf-8';
-    // Change default header content type for post request
-    $httpProvider.defaults.headers.post = {
-        'Content-Type': 'application/x-www-form-urlencoded'
-    };
-
-    // Transform every request to form urlencoded data
-    $httpProvider.defaults.transformRequest = function(data) {
-        if (data === undefined) {
-            return data;
-        }
-        // Jquery rescue !!!!!
-        return $.param(data);
-    };
-});
-
-
-
+// Has to do with csrf tokens for CORS
+app.config(['$httpProvider',
+    function($httpProvider) {
+        $httpProvider.defaults.xsrfCookieName = 'csrftoken';
+        $httpProvider.defaults.xsrfHeaderName = 'X-CSRFToken';
+    }
+]);
 
 // Sets up main route to main.html when page is first loaded. 
 app.config(
@@ -55,12 +42,7 @@ app.config(
 
 
             })
-        /*
-            .otherwise({
-                redirectTo: 'views/main.html',
-                controller: 'MainCtrl'
-            });
-*/
+
     });
 
 window.onLoadCallback = function() {
