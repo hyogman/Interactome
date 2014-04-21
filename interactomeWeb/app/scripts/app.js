@@ -44,15 +44,15 @@ app.config(
             });
 
 
-    })
 
-// Removes hashtags in browsers that support html5.
-// will fall back to hashtags if the browser doesnt.
-// Need server url-rewrite support for this which we don't have atm.
-// Leaving in for now to remind us on how to remove the ugly #
-//$locationProvider.html5Mode(true);
 
-})
+        // Removes hashtags in browsers that support html5.
+        // will fall back to hashtags if the browser doesnt.
+        // Need server url-rewrite support for this which we don't have atm.
+        // Leaving in for now to remind us on how to remove the ugly #
+        //$locationProvider.html5Mode(true);
+
+    });
 
 window.onLoadCallback = function() {
     // When the document is ready
