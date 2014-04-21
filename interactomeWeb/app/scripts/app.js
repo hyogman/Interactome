@@ -52,7 +52,7 @@ app.config(
 // Leaving in for now to remind us on how to remove the ugly #
 //$locationProvider.html5Mode(true);
 
-});
+})
 
 window.onLoadCallback = function() {
     // When the document is ready
