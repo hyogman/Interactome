@@ -45,6 +45,7 @@ angular.module('interactomeApp.RecommendationService', [])
                             defered.resolve(returnedPapers);
                         }
                     });
+
                 }
 
 

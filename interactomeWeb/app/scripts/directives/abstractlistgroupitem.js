@@ -25,12 +25,19 @@ angular.module('interactomeApp')
       		};
 
           $scope.getNames = function() {
-            var temp = ""
+            var temp = "";
             AwsService.getBatchUser($scope.paper.Authors).then(function(names) {
-              for(var i = 0; i < names.length; i++){
-                temp += (names[i].FirstName + " " + names[i].LastName + ", ");
+              // Ensure the correct order by adding one at a time to the string to display
+              // Authors will be in order and we can't trust AWS to give us the correct order.
+              for(var j = 0; j < $scope.paper.Authors.length; j++) {
+                for(var i = 0; i < names.length; i++) {
+
+                  if ($scope.paper.Authors[j] == names[i].Id) {
+                    temp += (names[i].FirstName + " " + names[i].LastName + ", ");
+                  }
+                }
               }
-               $scope.authorData = temp.slice(0, -2);
+              $scope.authorData = temp.slice(0, -2);
             });
           };
 
@@ -77,7 +84,6 @@ angular.module('interactomeApp')
 
     	}],
     	template: '<li class="list-group-item">' +
-                  '<div>' +
                   '<div class="btn-group" data-toggle="buttons">' +
                     '<label class="btn btn-primary liked" ng-click="likeClick()">' +
                       '<input type="radio" name="likeBtn" > <span class="glyphicon glyphicon-thumbs-up"></span>' +
@@ -93,7 +99,6 @@ angular.module('interactomeApp')
         	        '<h4 class="list-group-item-heading" ng-bind-html="paper.Title"></h4>' +
             	    '<input type="checkbox" class="pull-right abstractChck" value="{{paper.Id}}">' +
                 	'<p class="list-group-item-text"> {{authorData}} </p>' +
-                  '</div>' +
               	'</li>',
 
       link: function ($scope, element, attrs) {
