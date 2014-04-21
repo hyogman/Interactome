@@ -21,25 +21,25 @@ app.config(function(AwsServiceProvider) {
 
 // Sets up main route to main.html when page is first loaded. 
 app.config(
-    function($routeProvider) {
+    function($routeProvider, $locationProvider) {
         $routeProvider
-
         .when('/', {
             templateUrl: 'views/main.html',
             controller: 'MainCtrl'
         })
-            .when('/searchView', {
-                templateUrl: 'views/searchview.html',
-                controller: 'SearchCtrl'
+        .when('/searchView', {
+            templateUrl: 'views/searchview.html',
+            controller: 'SearchCtrl'
+        })
+        .otherwise({
+            redirectTo: '/'
+        });
 
-
-            })
-        /*
-            .otherwise({
-                redirectTo: 'views/main.html',
-                controller: 'MainCtrl'
-            });
-*/
+        // Removes hashtags in browsers that support html5.
+        // will fall back to hashtags if the browser doesnt.
+        // Need server url-rewrite support for this which we don't have atm.
+        // Leaving in for now to remind us on how to remove the ugly #
+        //$locationProvider.html5Mode(true);
     });
 
 window.onLoadCallback = function() {

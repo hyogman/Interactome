@@ -5,8 +5,7 @@
 **/
 var app = angular.module('interactomeApp');
 
-app.controller('MainCtrl', function($scope, $rootScope, UserService, AwsService, RecommendationService) {
-
+app.controller('MainCtrl', function($scope, UserService, AwsService, RecommendationService) {
     $scope.papers = [];
 
     $scope.absRecd = null;
@@ -66,8 +65,9 @@ app.controller('MainCtrl', function($scope, $rootScope, UserService, AwsService,
         $scope.modalText = abText;
         $('#abstractViewModal').modal('show'); // open modal
     }
-    // Listen for broadcasts of a token changing (this means AWS resources are available)
-    var cleanupToken = $rootScope.$on(AwsService.tokenSetBroadcast, function() {
+
+    // Setup by using AWS credentials
+    AwsService.credentials().then(function() {
         var uName = UserService.currentUsername();
         UserService.getDynamoPref(uName).then(function(dbItem){
             for(var i = 0; i < dbItem.Item.Likes.SS.length; i++){
@@ -84,14 +84,6 @@ app.controller('MainCtrl', function($scope, $rootScope, UserService, AwsService,
         });
         
     });
-
-    //Unsubscribe (from http://stackoverflow.com/questions/18856341/how-can-i-unregister-a-broadcast-event-to-rootscope-in-angularjs)
-    $scope.$on("$destroy", function() {
-        cleanupToken();
-    });
-
-
-
 });
 
 app.controller('SearchCtrl', function($scope, $location, SearchService) {
@@ -107,15 +99,14 @@ app.controller('SearchCtrl', function($scope, $location, SearchService) {
 /*
     Controls the elements in the header (search bar, sign in).
 */
-app.controller('HeaderCtrl', function($scope, $rootScope, $timeout, $location, UserService, AwsService) {
+app.controller('HeaderCtrl', function($scope, $location, UserService, AwsService) {
     
     $scope.userTopics = [];
     $scope.newTopic = null;
     // This function sets the user authentication from googleSignin directive. 
     $scope.signedIn = function(oauth) {
         // Google authentication passed into userService to hold onto and track user.
-        UserService.setCurrentOAuthUser(oauth)
-            .then(function(user) {
+        UserService.setCurrentOAuthUser(oauth).then(function(user) {
                 $scope.user = user;
             });
     };
@@ -126,8 +117,9 @@ app.controller('HeaderCtrl', function($scope, $rootScope, $timeout, $location, U
             $location.search('search', $scope.searchByInstitution).path(url);
         }
     };
-    // Listen for broadcasts of a token changing (this means AWS resources are available)
-    var cleanupToken = $rootScope.$on(AwsService.tokenSetBroadcast, function() {
+
+    // Setup AWS resources
+    AwsService.credentials().then(function() {
         AwsService.getTopics(UserService.currentUsername()).then(function(topics) {
             $scope.userTopics.length = 0;
             $scope.userTopics.push.apply($scope.userTopics, topics);
@@ -141,7 +133,8 @@ app.controller('HeaderCtrl', function($scope, $rootScope, $timeout, $location, U
         var newTopic = {Name: $scope.newTopic};
         var scope = $scope;
         AwsService.addTopic(username, $scope.newTopic).then(
-            function() {
+            function(topicId) {
+                newTopic.Id = topicId;
                 scope.userTopics.push(newTopic);
                 scope.userTopics.sort(function(a,b) {
                     return (a['Name'].localeCompare(b['Name'], 'kn', {numeric: true, caseFirst: "lower", usage: "sort"}) >= 0);
@@ -156,7 +149,19 @@ app.controller('HeaderCtrl', function($scope, $rootScope, $timeout, $location, U
         $scope.newTopic = null;
     }
 
-    $scope.$on("$destroy", function() {
-        cleanupToken();
-    });
+    $scope.deleteTopic = function(topicid) {
+        var i = 0;
+        var curLength = $scope.userTopics.length;
+        while(i < curLength) { // find the correct element
+            if ($scope.userTopics[i].Id == topicid) {
+                break;
+            }
+            else{
+                i++;
+            }
+        }
+        if (i < curLength) {// delete element if found
+            $scope.userTopics.splice(i, 1);
+        }
+    }
 });
