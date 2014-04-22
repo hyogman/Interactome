@@ -3,7 +3,7 @@ import json
 from django.core.context_processors import csrf
 from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponse
-import boto 
+from boto import dynamodb2
 
 
 
@@ -13,6 +13,12 @@ def getRecs(request):
 	print request.body
 	print request.body
 	return HttpResponse("success")
+	#limit = request.size
+
+
+
+
+
 
 
 
