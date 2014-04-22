@@ -50,10 +50,13 @@ angular.module('interactomeApp.RecommendationService', [])
 
 
 
+
+
                 // running simple get request
                 $http({
-                    method: 'GET',
-                    url: 'http://127.0.0.1:8000/recs/'
+                    method: 'POST',
+                    url: 'http://127.0.0.1:8000/recs/',
+                    data: abstractList
                 }).
                 success(function(data, status, headers, config) {
                     // this callback will be called asynchronously

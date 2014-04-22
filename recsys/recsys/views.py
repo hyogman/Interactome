@@ -11,7 +11,8 @@ import boto
 @csrf_exempt
 def getRecs(request):
 	print request.body
-	return HttpResponse('Success')
+	print request.body
+	return HttpResponse("success")
 
 
 
