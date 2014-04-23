@@ -12,10 +12,31 @@ angular.module('interactomeApp.RecommendationService', [])
             //   @abstractList: should be a list of the dynamo Id's
             //   Returns: a promise which will resolve to an array of hashes that have paper data from dynamo.
             getRecs: function(abstractList) {
+
+
+                // running simple get request
+                $http({
+                    method: 'POST',
+                    url: 'http://127.0.0.1:8000/recs/',
+                    data: abstractList
+                }).
+                success(function(data, status, headers, config) {
+                    // this callback will be called asynchronously
+                    // when the response is available
+                    window.alert("success");
+                }).
+                error(function(data, status, headers, config) {
+                    // called asynchronously if an error occurs
+                    // or server returns response with an error status.
+                    window.alert("fail");
+                });
+
+
+
                 var defered = $q.defer();
 
                 var limit = 100 + abstractList.length; // min of abstracts needed to make sure no duplicates returnedPapers
-
+                console.log(abstractList.length);
 
                 // Scan table for limit number of papers
                 if (abstractList.length > 0) {
@@ -47,29 +68,6 @@ angular.module('interactomeApp.RecommendationService', [])
                     });
 
                 }
-
-
-
-
-
-                // running simple get request
-                $http({
-                    method: 'POST',
-                    url: 'http://127.0.0.1:8000/recs/',
-                    data: abstractList
-                }).
-                success(function(data, status, headers, config) {
-                    // this callback will be called asynchronously
-                    // when the response is available
-                    window.alert("success");
-                }).
-                error(function(data, status, headers, config) {
-                    // called asynchronously if an error occurs
-                    // or server returns response with an error status.
-                    window.alert("fail");
-                });
-
-
                 return defered.promise;
             },
         };
