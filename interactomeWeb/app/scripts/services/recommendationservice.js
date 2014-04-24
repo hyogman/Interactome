@@ -13,27 +13,25 @@ angular.module('interactomeApp.RecommendationService', [])
         //   @abstractList: should be a list of the dynamo Id's
         //   Returns: a promise which will resolve to an array of hashes that have paper data from dynamo.
         getRecs: function(abstractList) {
-            var defered = $q.defer();
 
-            var limit = 100 + abstractList.length; // min of abstracts needed to make sure no duplicates returned
-
-            // start of http play
-
-            $http.get({
-
-                url: 'recsys/views/home/'
+            // running simple get request
+            $http({
+                method: 'POST',
+                url: 'http://127.0.0.1:8000/recs/',
+                data: abstractList
             }).
             success(function(data, status, headers, config) {
                 // this callback will be called asynchronously
                 // when the response is available
-                alert("here");
-
+                window.alert("success");
             }).
             error(function(data, status, headers, config) {
                 // called asynchronously if an error occurs
                 // or server returns response with an error status.
-                alert("fail");
+                window.alert("fail");
             });
+            var defered = $q.defer();
+            var limit = 100 + abstractList.length; // min of abstracts needed to make sure no duplicates returned
             // end of http play 
             // Scan table for limit number of papers
             if (abstractList.length > 0) {
