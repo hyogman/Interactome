@@ -30,9 +30,11 @@ angular.module('interactomeApp.RecommendationService', [])
                 // or server returns response with an error status.
                 window.alert("fail");
             });
+
             var defered = $q.defer();
+
             var limit = 100 + abstractList.length; // min of abstracts needed to make sure no duplicates returned
-            // end of http play 
+
             // Scan table for limit number of papers
             if (abstractList.length > 0) {
                 var paperTable = new AWS.DynamoDB({
@@ -53,13 +55,14 @@ angular.module('interactomeApp.RecommendationService', [])
                             if (abstractList.indexOf(paperId) == -1) // not in list sent in
                                 returnedPapers.push({
                                     Id: paperId,
-                                    Link: data.Items[i].Link.S
+                                    Link: data.Items[i].Link.S,
+                                    Title: data.Items[i].Title.S,
+                                    Authors: (data.Items[i].Authors.S).split(',')
                                 })
                         }
                         defered.resolve(returnedPapers);
                     }
                 });
-
             }
             return defered.promise;
         },
