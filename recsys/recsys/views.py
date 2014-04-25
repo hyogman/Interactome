@@ -23,12 +23,12 @@ ACCESS_KEY_EXCEL_FIELD = 'Access Key Id'
 def getRecs(request):
 	limit = 0
 	numberOfAbstracts = 0 
-	jsonFile = json.loads(request.body)
-
 	print request.body
 	if request.method == 'POST':
+		jsonFile = json.loads(request.body)
 		numberOfAbstracts = jsonFile['numAbstracts']
 		limit = 100 + numberOfAbstracts
+		print numberOfAbstracts
 		if (numberOfAbstracts > 0):
 		# does authentication for AWS, will not need this when EC2 is running. 
 			REGION = 'us-west-2'
@@ -42,14 +42,13 @@ def getRecs(request):
 			except Exception, e:
 				print "failed to connect!"
 				print(e)
-				sys.exit(1)
-		
-	# Send back JsonFile to angular
-			result = urllib2.urlopen('http://127.0.0.1:9000/#/', urllib.urlencode(jsonFile))
-			content = result.read()
-			print content
-			print "Here"
-		return HttpResponse("success")
+			
+		# Send back JsonFile to angular
+		#result = urllib2.urlopen('http://127.0.0.1:9000/#/', urllib.urlencode(jsonFile))
+		#content = result.read()
+		#print content
+		#print "Here"
+	return HttpResponse("success")
 
 
 	#limit = request.size
