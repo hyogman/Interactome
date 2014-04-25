@@ -18,7 +18,10 @@ angular.module('interactomeApp.RecommendationService', [])
             $http({
                 method: 'POST',
                 url: 'http://127.0.0.1:8000/recs/',
-                data: abstractList
+                data: {
+                    'list': abstractList,
+                    'numAbstracts': abstractList.length
+                }
             }).
             success(function(data, status, headers, config) {
                 // this callback will be called asynchronously
@@ -30,6 +33,7 @@ angular.module('interactomeApp.RecommendationService', [])
                 // or server returns response with an error status.
                 window.alert("fail");
             });
+
 
             var defered = $q.defer();
 
