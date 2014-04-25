@@ -23,10 +23,11 @@ ACCESS_KEY_EXCEL_FIELD = 'Access Key Id'
 def getRecs(request):
 	limit = 0
 	numberOfAbstracts = 0 
-	
+	jsonFile = json.loads(request.body)
+
 	print request.body
 	if request.method == 'POST':
-		numberOfAbstracts = numberOfAbstracts + 1
+		numberOfAbstracts = jsonFile['numAbstracts']
 		limit = 100 + numberOfAbstracts
 		if (numberOfAbstracts > 0):
 		# does authentication for AWS, will not need this when EC2 is running. 
@@ -42,7 +43,7 @@ def getRecs(request):
 				print "failed to connect!"
 				print(e)
 				sys.exit(1)
-			#print numberOfAbstracts
+			
 	return HttpResponse("success")
 	#limit = request.size
 
