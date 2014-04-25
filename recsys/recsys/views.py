@@ -3,7 +3,6 @@ import json
 from django.core.context_processors import csrf
 from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponse
-#import boto.dynamodb
 from boto import dynamodb2
 import sys
 import csv
@@ -13,6 +12,7 @@ import time
 from boto.s3.key import Key
 from boto.dynamodb2.table import Table
 from boto import s3
+import urllib2, urllib
 
 SECRET_KEY_EXCEL_FIELD = 'Secret Access Key'
 ACCESS_KEY_EXCEL_FIELD = 'Access Key Id'
@@ -43,8 +43,15 @@ def getRecs(request):
 				print "failed to connect!"
 				print(e)
 				sys.exit(1)
-			
-	return HttpResponse("success")
+		
+	# Send back JsonFile to angular
+			result = urllib2.urlopen('http://127.0.0.1:9000/#/', urllib.urlencode(jsonFile))
+			content = result.read()
+			print content
+			print "Here"
+		return HttpResponse("success")
+
+
 	#limit = request.size
 
 

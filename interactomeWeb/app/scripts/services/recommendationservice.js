@@ -14,7 +14,7 @@ angular.module('interactomeApp.RecommendationService', [])
         //   Returns: a promise which will resolve to an array of hashes that have paper data from dynamo.
         getRecs: function(abstractList) {
 
-            // running simple get request
+            // Send data to Django, POST request
             $http({
                 method: 'POST',
                 url: 'http://127.0.0.1:8000/recs/',
@@ -35,6 +35,15 @@ angular.module('interactomeApp.RecommendationService', [])
             });
 
 
+            // Recieve Data back from Django 
+            /*
+            $http({
+                method: 'POST',
+                url: 'http://127.0.0.1:8000/recs/'
+            }).success(function(data) {
+                console.log(data); // response data 
+            });
+*/
             var defered = $q.defer();
 
             var limit = 100 + abstractList.length; // min of abstracts needed to make sure no duplicates returned
