@@ -27,23 +27,23 @@ angular.module('interactomeApp.RecommendationService', [])
                 // this callback will be called asynchronously
                 // when the response is available
                 window.alert("success");
+                console.log(data);
             }).
             error(function(data, status, headers, config) {
                 // called asynchronously if an error occurs
                 // or server returns response with an error status.
                 window.alert("fail");
+                console.log(data);
             });
 
 
-            // Recieve Data back from Django 
-            /*
-            $http({
-                method: 'POST',
-                url: 'http://127.0.0.1:8000/recs/'
-            }).success(function(data) {
-                console.log(data); // response data 
-            });
-*/
+
+            $http.get("http://127.0.0.1:8000/recs/").success(function(data) {
+                console.log(data);
+            })
+
+            console.log("here 2");
+
             var defered = $q.defer();
 
             var limit = 100 + abstractList.length; // min of abstracts needed to make sure no duplicates returned

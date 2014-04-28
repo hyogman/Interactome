@@ -13,6 +13,7 @@ from boto.s3.key import Key
 from boto.dynamodb2.table import Table
 from boto import s3
 import urllib2, urllib
+import requests
 
 SECRET_KEY_EXCEL_FIELD = 'Secret Access Key'
 ACCESS_KEY_EXCEL_FIELD = 'Access Key Id'
@@ -23,10 +24,11 @@ ACCESS_KEY_EXCEL_FIELD = 'Access Key Id'
 def getRecs(request):
 	limit = 0
 	numberOfAbstracts = 0 
-	print request.body
+	sendDataBack = ' '
 	if request.method == 'POST':
 		jsonFile = json.loads(request.body)
 		numberOfAbstracts = jsonFile['numAbstracts']
+		sendDataBack = jsonFile['list']
 		limit = 100 + numberOfAbstracts
 		print numberOfAbstracts
 		if (numberOfAbstracts > 0):
@@ -38,17 +40,23 @@ def getRecs(request):
 				authLine = reader.next()	
 				accessKey = authLine[ACCESS_KEY_EXCEL_FIELD]
 				secretKey = authLine[SECRET_KEY_EXCEL_FIELD]
-				dynamoConn = dynamodb2.connect_to_region(REGION, aws_access_key_id=accessKey, aws_secret_access_key=secretKey)
+				db = dynamodb2.connect_to_region(REGION, aws_access_key_id=accessKey, aws_secret_access_key=secretKey)
+				#scan through table 
+				scanResults = db.scan('Paper', attributes_to_get= ['Id'], limit = numberOfAbstracts)
+				print scanResults 
+				
+
+
+
 			except Exception, e:
 				print "failed to connect!"
 				print(e)
 			
-		# Send back JsonFile to angular
-		#result = urllib2.urlopen('http://127.0.0.1:9000/#/', urllib.urlencode(jsonFile))
-		#content = result.read()
-		#print content
-		#print "Here"
-	return HttpResponse("success")
+	# Send back JsonFile to angular
+		
+		#sendDataBack = requests.post("http://127.0.0.1:9000/#/", params=jsonFile)
+		#print jsonFile
+	return HttpResponse(sendDataBack)
 
 
 	#limit = request.size
