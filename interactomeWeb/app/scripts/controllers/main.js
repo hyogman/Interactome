@@ -50,6 +50,8 @@ app.controller('MainCtrl', function($scope, UserService, AwsService, Recommendat
             //AwsService.postMessageToSNS('arn:aws:sns:us-west-2:005837367462:abstracts_req', abstractsChecked);
             $scope.absRecd = "Number of abstracts used to get recommendations: " + absCount; // this is just to show off functionality
             RecommendationService.getRecs(abstracts).then(function(paperList) {
+                console.log(paperList);
+
                 $scope.papers.length = 0;
                 $scope.papers.push.apply($scope.papers, paperList);
                 $scope.currentPage = 0;

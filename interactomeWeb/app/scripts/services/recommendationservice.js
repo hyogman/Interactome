@@ -1,9 +1,6 @@
 'use strict';
 /*
-  This service takes care of contacting the reccomendation system.
-
-  Not enough error handling to make this service robust. However, due to the looming eventuallity of a complete rewrite, I don't see the point
-  in making it robust.
+ Sends abstractList to Django server. Future rec computations done out of intermediary Django layer. Results then returned back to web app. 
 */
 angular.module('interactomeApp.RecommendationService', [])
 
@@ -13,8 +10,9 @@ angular.module('interactomeApp.RecommendationService', [])
         //   @abstractList: should be a list of the dynamo Id's
         //   Returns: a promise which will resolve to an array of hashes that have paper data from dynamo.
         getRecs: function(abstractList) {
+            var defered = $q.defer();
 
-            // Send data to Django, POST request
+            // Send and recieve data to Django, POST request
             $http({
                 method: 'POST',
                 url: 'http://127.0.0.1:8000/recs/',
@@ -27,7 +25,9 @@ angular.module('interactomeApp.RecommendationService', [])
                 // this callback will be called asynchronously
                 // when the response is available
                 window.alert("success");
-                console.log(data);
+                defered.resolve(data);
+
+
             }).
             error(function(data, status, headers, config) {
                 // called asynchronously if an error occurs
@@ -35,16 +35,7 @@ angular.module('interactomeApp.RecommendationService', [])
                 window.alert("fail");
                 console.log(data);
             });
-
-
-
-            $http.get("http://127.0.0.1:8000/recs/").success(function(data) {
-                console.log(data);
-            })
-
-            console.log("here 2");
-
-            var defered = $q.defer();
+            /*
 
             var limit = 100 + abstractList.length; // min of abstracts needed to make sure no duplicates returned
 
@@ -70,15 +61,19 @@ angular.module('interactomeApp.RecommendationService', [])
                                     Id: paperId,
                                     Link: data.Items[i].Link.S,
                                     Title: data.Items[i].Title.S,
-                                    Authors: (data.Items[i].Authors.S).split(',')
+                                    Authors: (data.Items[i].Authors.S).split(','),
                                 })
                         }
                         defered.resolve(returnedPapers);
                     }
                 });
             }
+            */
             return defered.promise;
+
         },
+
     };
+
     return service;
 });
