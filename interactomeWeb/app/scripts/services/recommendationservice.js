@@ -15,7 +15,7 @@ angular.module('interactomeApp.RecommendationService', [])
             // Send and recieve data to Django, POST request
             $http({
                 method: 'POST',
-                url: 'http://127.0.0.1:8000/recs/',
+                url: 'http://54.201.190.162:8000/recs/',
                 data: {
                     'list': abstractList,
                     'numAbstracts': abstractList.length
