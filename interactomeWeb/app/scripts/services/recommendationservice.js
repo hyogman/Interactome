@@ -12,10 +12,13 @@ angular.module('interactomeApp.RecommendationService', [])
         getRecs: function(abstractList) {
             var defered = $q.defer();
 
+            //'http://54.201.190.162:8000/recs/'
+            //'http://127.0.0.1:8000/recs/'
+
             // Send and recieve data to Django, POST request
             $http({
                 method: 'POST',
-                url: 'http://54.201.190.162:8000/recs/',
+                url: 'http://ec2-54-201-190-162.us-west-2.compute.amazonaws.com:8000/recs/',
                 data: {
                     'list': abstractList,
                     'numAbstracts': abstractList.length
@@ -35,40 +38,7 @@ angular.module('interactomeApp.RecommendationService', [])
                 window.alert("fail");
                 console.log(data);
             });
-            /*
 
-            var limit = 100 + abstractList.length; // min of abstracts needed to make sure no duplicates returned
-
-            // Scan table for limit number of papers
-            if (abstractList.length > 0) {
-                var paperTable = new AWS.DynamoDB({
-                    params: {
-                        TableName: "Paper"
-                    }
-                });
-                var returnedPapers = [];
-                paperTable.scan({
-                    Limit: limit
-                }, function(err, data) {
-                    if (err)
-                        console.log(err);
-                    else {
-                        var paperId = "";
-                        for (var i = 0; i < limit; i++) {
-                            paperId = data.Items[i].Id.S;
-                            if (abstractList.indexOf(paperId) == -1) // not in list sent in
-                                returnedPapers.push({
-                                    Id: paperId,
-                                    Link: data.Items[i].Link.S,
-                                    Title: data.Items[i].Title.S,
-                                    Authors: (data.Items[i].Authors.S).split(','),
-                                })
-                        }
-                        defered.resolve(returnedPapers);
-                    }
-                });
-            }
-            */
             return defered.promise;
 
         },
