@@ -5,7 +5,7 @@
 **/
 var app = angular.module('interactomeApp');
 
-app.controller('MainCtrl', function($scope, UserService, AwsService, RecommendationService) {
+app.controller('MainCtrl', function($rootScope, $scope, UserService, AwsService, RecommendationService) {
     $scope.papers = [];
 
     $scope.modalTitle = null;
@@ -25,8 +25,13 @@ app.controller('MainCtrl', function($scope, UserService, AwsService, Recommendat
     $scope.selectedAbstracts = [];
 
 
+    $scope.recOriginAbstracts = []; // list of abstracts the current recs are seeded from
+
 
     $scope.paginate = function() {
+        $('body').animate({
+            scrollTop: 0
+        });
         // Setting currentPage to 0 is a hack to get the recs working on page 1.
         if ($scope.currentPage == 0)
             $scope.currentPage = 1;
@@ -44,15 +49,40 @@ app.controller('MainCtrl', function($scope, UserService, AwsService, Recommendat
             //AwsService.postMessageToSNS('arn:aws:sns:us-west-2:005837367462:abstracts_req', abstractsChecked);
 
             RecommendationService.getRecs($scope.selectedAbstracts).then(function(paperList) {
+                var temp = $scope.selectedAbstracts.slice(0); // copy array for rec heading
                 $scope.selectedAbstracts.length = 0;
                 $scope.papers.length = 0;
-                $scope.papers.push.apply($scope.papers, paperList);
-                //Pagination
-                $scope.currentPage = 0;
-                $scope.paginationTotalItems = $scope.papers.length;
-                $scope.moreThanOnePage = ($scope.numPerPage < $scope.paginationTotalItems);
+
+                // Having the logic inside of the animate causes a nice fade in for the new abstracts.
+                // Since we are using jquery, we must wrap it in an $apply for angular to know about it.
+                // We use  jquery here to scroll because smooth scrolling in angular is messy.
+                $('body').animate({
+                    scrollTop: 0
+                }, 2000, function() {
+                    $scope.$apply(function() {
+                        $scope.recOriginAbstracts = temp; //updates the text of the abstracttitles directive
+                        $scope.gettingAbstractRecs = false;
+                        $scope.papers.push.apply($scope.papers, paperList);
+
+                        //Pagination
+                        $scope.currentPage = 0;
+                        $scope.paginationTotalItems = $scope.papers.length;
+                        $scope.moreThanOnePage = ($scope.numPerPage < $scope.paginationTotalItems);
+                    })
+                });
+
             });
+            // Triggers animation, will happen before .then happens (because of async)
+            $scope.gettingAbstractRecs = true;
         }
+    };
+
+    // Controls get-recs cancel button behavior. Let's directives know to become unselected.
+    $scope.cancelSelectedAbstracts = function() {
+        //$emit travels upwards so since we are using rootscope (directives have isolated scope)
+        //it will not bubble to any other scopes.
+        $rootScope.$emit('cancelSelectedAbstracts');
+        $scope.selectedAbstracts.length = 0;
     };
 
     // updates abstract information for modal view
