@@ -16,15 +16,19 @@ BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.6/howto/deployment/checklist/
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'zo*@5ke6qp4-qqvwtu$ub9!c^!x4qr1$rb@ena-!0yxp5j3dnn'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+#(This was addressed by creating Linux Environment variable to SECRET_KEY, copy of key in Google Drive)
+
+SECRET_KEY = os.environ["SECRET_KEY"]
+
+#Debug is turned off in prod for security reasons, but need to add Allowed Hosts below
+DEBUG = False
+
 
 TEMPLATE_DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [ '.ec2-54-201-190-162.us-west-2.compute.amazonaws.com']
 
 #CORS Whitelist settings 
 CORS_ORIGIN_WHITELIST = (

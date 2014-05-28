@@ -37,10 +37,10 @@ angular.module('interactomeApp.Userservice', [])
 
         },
 
-        currentUsername: function () {
-            return service._username; 
+        currentUsername: function() {
+            return service._username;
         }
-        
+
     };
     return service;
 });

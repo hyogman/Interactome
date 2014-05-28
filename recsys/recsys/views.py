@@ -15,6 +15,7 @@ from boto import s3
 import urllib2, urllib
 import requests
 
+
 SECRET_KEY_EXCEL_FIELD = 'Secret Access Key'
 ACCESS_KEY_EXCEL_FIELD = 'Access Key Id'
 
@@ -33,16 +34,17 @@ def getRecs(request):
 		
 		if (numberOfAbstracts > 0):
 		
-		# does authentication for AWS, will not need this when EC2 is running. 
+		#does authentication for AWS, will not need this when EC2 is running. 
+			
 			REGION = 'us-west-2'
 			try:
-				csvfile = open('/Users/henryyogman/Desktop/credentials.csv', 'rU')
-				reader = csv.DictReader(csvfile) 
-				authLine = reader.next()	
-				accessKey = authLine[ACCESS_KEY_EXCEL_FIELD]
-				secretKey = authLine[SECRET_KEY_EXCEL_FIELD]
-				db = dynamodb2.connect_to_region(REGION, aws_access_key_id=accessKey, aws_secret_access_key=secretKey)
-				
+				# csvfile = open('/Users/henryyogman/Desktop/credentials.csv', 'rU')
+				# reader = csv.DictReader(csvfile) 
+				# authLine = reader.next()	
+				# accessKey = authLine[ACCESS_KEY_EXCEL_FIELD]
+				# secretKey = authLine[SECRET_KEY_EXCEL_FIELD]
+				db = dynamodb2.connect_to_region(REGION)
+			
 				#scan through table 
 				scanResults = db.scan('Paper', limit = limit)
 				for i in range(0, limit):
@@ -60,6 +62,7 @@ def getRecs(request):
 				print(e)	
 	sendDataBack = json.dumps(returnedPapers, skipkeys=False, ensure_ascii=False)
 	return HttpResponse(sendDataBack)
+
 
 
 
