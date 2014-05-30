@@ -17,7 +17,7 @@
     </div>
 </div>
 
-<collapsable-abstract-titles papers="recOriginAbstracts"></collapsable-abstract-titles>
+<collapsable-abstract-titles papers="cachable.recOriginAbstracts"></collapsable-abstract-titles>
 
 <!-- see main.js and abstractlistgroupitem.js -->
 <ul id="abstracts" class="list-group">
@@ -32,16 +32,16 @@
     </div>
 
     <div ng-repeat="paper in filteredPapers" class="fade-animation">
-        <abstract-list-group-item paper="paper" like-status="paperLikeStatus[paper.Id]" on-view="showAbstract(abTitle, abAuthor, abText)" selected-abstracts="selectedAbstracts"></abstract-list-group-item>
+        <abstract-list-group-item paper="paper" like-status="cachable.paperLikeStatus[paper.Id]" on-view="showAbstract(abTitle, abAuthor, abText)" selected-abstracts="cachable.selectedAbstracts"></abstract-list-group-item>
     </div>
 </ul>
 
 <!-- Page Pagination -->
-<Pagination class="clickable-pointer" total-items="paginationTotalItems" items-per-page="numPerPage" page="currentPage" max-size="maxSize" boundary-links="true" ng-show="moreThanOnePage">
+<Pagination class="clickable-pointer" total-items="paginationTotalItems" items-per-page="cachable.numPerPage" page="cachable.currentPage" max-size="maxSize" boundary-links="true" ng-show="moreThanOnePage">
 </pagination>
 
 <!-- get rec button that appears at bottom of page -->
-<div class="get-rec-container well" ng-if="selectedAbstracts.length > 0 && !gettingAbstractRecs">
+<div class="get-rec-container well" ng-if="cachable.selectedAbstracts.length > 0 && !gettingAbstractRecs">
     <button type="button" class="btn btn-danger" ng-click="cancelSelectedAbstracts()">
         <span class="glyphicon glyphicon-remove"></span> Cancel Selection
     </button>
