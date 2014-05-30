@@ -9,6 +9,7 @@ angular.module('interactomeApp')
     
     $scope.userTopics = [];
     $scope.newTopic = null;
+    $scope.searchByText = $location.search().search;
     // This function sets the user authentication from googleSignin directive. 
     $scope.signedIn = function(oauth) {
         // Google authentication passed into userService to hold onto and track user.
