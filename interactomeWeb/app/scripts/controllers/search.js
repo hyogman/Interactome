@@ -9,5 +9,7 @@ angular.module('interactomeApp')
         $scope.institutions.push.apply($scope.institutions, userData);
     });
 
+
+    $scope.backClick = function(){ $location.path("/"); }
 });
   
