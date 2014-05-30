@@ -5,7 +5,7 @@
 **/
 var app = angular.module('interactomeApp');
 
-app.controller('MainCtrl', function($rootScope, $scope, UserService, AwsService, RecommendationService) {
+app.controller('MainCtrl', function($rootScope, $scope, UserService, AwsService, RecommendationService, MainCache) {
     $scope.papers = [];
 
     $scope.modalTitle = null;
