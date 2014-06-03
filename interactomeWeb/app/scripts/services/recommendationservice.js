@@ -27,7 +27,12 @@ angular.module('interactomeApp.RecommendationService', [])
             }).success(function(data, status, headers, config) {
                 // this callback will be called asynchronously
                 // when the response is available
-                defered.resolve(data);
+                // checks if fault is on Django end 
+                if (data.length != 0)
+                    defered.resolve(data);
+                else
+                    defered.reject("Internal Error");
+
 
 
             }).error(function(data, status, headers, config) {
