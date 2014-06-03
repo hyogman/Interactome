@@ -27,14 +27,13 @@ angular.module('interactomeApp.RecommendationService', [])
             }).success(function(data, status, headers, config) {
                 // this callback will be called asynchronously
                 // when the response is available
-
                 defered.resolve(data);
 
 
             }).error(function(data, status, headers, config) {
                 // called asynchronously if an error occurs
                 // or server returns response with an error status.
-                window.alert("Connection failed");
+                deferred.reject("Connection failed");
 
             });
 
