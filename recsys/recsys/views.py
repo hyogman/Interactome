@@ -16,6 +16,10 @@ import urllib2, urllib
 import requests
 
 
+# for logging errors 
+logging.basicConfig(filename='recsys.log', level=logging.INFO, format='%(asctime)s -- %(levelname)s: %(message)s')
+
+
 SECRET_KEY_EXCEL_FIELD = 'Secret Access Key'
 ACCESS_KEY_EXCEL_FIELD = 'Access Key Id'
 
@@ -59,7 +63,9 @@ def getRecs(request):
 						returnedPapers.append(tmp)
 			except Exception, e:
 				print "Session Failed..."
-				print(e)	
+				logging.error(e)
+
+				returnedPapers = []	
 	sendDataBack = json.dumps(returnedPapers, skipkeys=False, ensure_ascii=False)
 	return HttpResponse(sendDataBack)
 

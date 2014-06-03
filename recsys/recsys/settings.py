@@ -33,17 +33,19 @@ ALLOWED_HOSTS = [ '.ec2-54-201-190-162.us-west-2.compute.amazonaws.com']
 #CORS Whitelist settings 
 CORS_ORIGIN_WHITELIST = (
         'http://127.0.0.1:9000/#/'
+        # for some reason we can only do one at a time, so need to quickly change for our production version
+        #'http://sagebio-interactome.s3-website-us-west-2.amazonaws.com/#/'
     )
 
 #APPEND_SLASH = False
 
 CORS_ALLOW_METHODS = (
-        'GET',
+        #'GET',
         'POST',
-        'PUT',
-        'PATCH',
-        'DELETE',
-        'OPTIONS'
+        #'PUT',
+        #'PATCH',
+        #'DELETE',
+        #'OPTIONS'
     )
    
 CORS_ALLOW_HEADERS = (
