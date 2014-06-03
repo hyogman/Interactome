@@ -33,8 +33,7 @@ ALLOWED_HOSTS = [ '.ec2-54-201-190-162.us-west-2.compute.amazonaws.com']
 #CORS Whitelist settings 
 CORS_ORIGIN_WHITELIST = (
         'http://127.0.0.1:9000/#/'
-        # for some reason we can only do one at a time, so need to quickly change for our production version
-        #'http://sagebio-interactome.s3-website-us-west-2.amazonaws.com/#/'
+        'http://sagebio-interactome.s3-website-us-west-2.amazonaws.com/#/'
     )
 
 #APPEND_SLASH = False
@@ -113,3 +112,5 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.6/howto/static-files/
 
 STATIC_URL = '/static/'
+
+
