@@ -13,7 +13,6 @@ angular.module('interactomeApp')
     return {	
       	restrict: 'E',
       	scope: {      	
-          localOnView: '&onView',
           paper: '=',
           likeStatus: '=',
           selectedAbstracts: '='
@@ -32,7 +31,7 @@ angular.module('interactomeApp')
                     temp += (names[i].FirstName + " " + names[i].LastName + ", ");
                 }
               }
-              $scope.authorData = temp.slice(0, -2);
+              $scope.paper.authorData = temp.slice(0, -2);
             });
           };
 
@@ -53,26 +52,7 @@ angular.module('interactomeApp')
           };
 
           $scope.viewAbstract = function() {
-            // Only grabs from s3 once
-            if ($scope.s3Data === undefined) {
-              $http.get($scope.paper.Link).success(function(data) {
-                $scope.s3Data = data;
-
-                $scope.localOnView({
-                abTitle: $scope.s3Data.AbstractTitle,
-                abAuthor: $scope.authorData,
-                abText: $scope.s3Data.Abstract});
-
-              }).error(function() {
-                $scope.localOnView({ abTitle: "ERROR", abText: "Could not find abstract."});
-              })
-
-            } else {
-              $scope.localOnView({
-                abTitle: $scope.s3Data.AbstractTitle,
-                abAuthor: $scope.authorData,
-                abText: $scope.s3Data.Abstract});
-            }
+            $rootScope.$emit('showModal', $scope.paper); 
           };
 
           $scope.selectedClick = function () {
@@ -89,7 +69,7 @@ angular.module('interactomeApp')
           var unbind = $rootScope.$on('cancelSelectedAbstracts', function() { $scope.selected = false; });
           //Cleanup listener
           $scope.$on('$destroy', unbind);
-
+          
     	}],
     	templateUrl: 'scripts/directives/abstractlistgroupitem.html',
 

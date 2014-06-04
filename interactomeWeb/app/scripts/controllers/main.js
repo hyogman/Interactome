@@ -45,37 +45,54 @@ app.controller('MainCtrl', function($rootScope, $scope, UserService, AwsService,
         var end = begin + $scope.cachable.numPerPage;
         $scope.filteredPapers = $scope.cachable.papers.slice(begin, end);
     };
+
     $scope.$watch('cachable.currentPage', $scope.paginate);
     $scope.$watch('cachable.numPerPage', $scope.paginate);
 
-    // Determines what happens after one or more abstract is selected
-    $scope.abstractsRec = function() {
-        //var abstractsChecked = $scope.cachable.selectedAbstracts.join();
-        //AwsService.postMessageToSNS('arn:aws:sns:us-west-2:005837367462:abstracts_req', abstractsChecked);
-        RecommendationService.getRecs($scope.cachable.selectedAbstracts).then(function(paperList) {
-            var temp = $scope.cachable.selectedAbstracts.slice(0); // copy array for rec heading
-            $scope.cachable.selectedAbstracts.length = 0;
-            $scope.cachable.papers.length = 0;
+    $scope.$on('getRecsFromTopic', function(event, topicspaperslist) {
+        $scope.abstractsRecFromTopic(topicspaperslist);
+    });
 
-            // Having the logic inside of the animate causes a nice fade in for the new abstracts.
-            // Since we are using jquery, we must wrap it in an $apply for angular to know about it.
-            // We use  jquery here to scroll because smooth scrolling in angular is messy.
-            $('body').animate({scrollTop: 0}, 2000, function() { 
-                $scope.$apply(function() {
-                    $scope.cachable.recOriginAbstracts = temp;//updates the text of the abstracttitles directive
-                    $scope.gettingAbstractRecs=false;
-                    $scope.cachable.papers.push.apply($scope.cachable.papers, paperList);
+    // Calls RecommendationService for recommendations based off of list of abstracts
+    $scope.abstractsRec = function(paperslist) {
+        if(paperslist.length > 0) {
+            //var abstractsChecked = $scope.selectedAbstracts.join();
+            //AwsService.postMessageToSNS('arn:aws:sns:us-west-2:005837367462:abstracts_req', abstractsChecked);
+            RecommendationService.getRecs(paperslist).then(function(reclist) {
+                var temp = paperslist.slice(0); // copy array for rec heading
+                $scope.cachable.selectedAbstracts.length = 0;
+                $scope.cachable.papers.length = 0;
 
-                    //Pagination
-                    $scope.cachable.currentPage = 0;
-                    $scope.paginationTotalItems = $scope.cachable.papers.length;
-                    $scope.moreThanOnePage = ($scope.cachable.numPerPage < $scope.paginationTotalItems);
-                })
+                // Having the logic inside of the animate causes a nice fade in for the new abstracts.
+                // Since we are using jquery, we must wrap it in an $apply for angular to know about it.
+                // We use  jquery here to scroll because smooth scrolling in angular is messy.
+                $('body').animate({scrollTop: 0}, 2000, function() { 
+                    $scope.$apply(function() {
+                        $scope.cachable.recOriginAbstracts = temp;//updates the text of the abstracttitles directive
+                        $scope.gettingAbstractRecs=false;
+                        $scope.cachable.papers.push.apply($scope.cachable.papers, reclist);
+
+                        //Pagination
+                        $scope.cachable.currentPage = 0;
+                        $scope.paginationTotalItems = $scope.cachable.papers.length;
+                        $scope.moreThanOnePage = ($scope.cachable.numPerPage < $scope.paginationTotalItems);
+                    })
+                });
             });
             
         });
         // Triggers animation, will happen before .then happens (because of async)
         $scope.gettingAbstractRecs = true;
+    };
+
+    // request for recommendations from selected abstracts
+    $scope.abstractsRecFromSelected = function() {
+        $scope.abstractsRec($scope.selectedAbstracts);
+    };
+
+    // request for recommendations from topics
+    $scope.abstractsRecFromTopic = function(topicspaperslist) {
+        $scope.abstractsRec(topicspaperslist);
     };
 
     // Controls get-recs cancel button behavior. Let's directives know to become unselected.
@@ -85,14 +102,6 @@ app.controller('MainCtrl', function($rootScope, $scope, UserService, AwsService,
         $rootScope.$emit('cancelSelectedAbstracts');
         $scope.cachable.selectedAbstracts.length = 0;
     };
-
-    // updates abstract information for modal view
-    $scope.showAbstract = function(abTitle, abAuthor, abText) {
-        $scope.modalTitle = abTitle;
-        $scope.modalAuthor = abAuthor;
-        $scope.modalText = abText;
-        $('#abstractViewModal').modal('show'); // open modal
-    }
 
     // initial setup of AWS resources (abstracts)
     AwsService.credentials().then(function() {
