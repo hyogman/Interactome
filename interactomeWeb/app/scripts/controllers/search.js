@@ -9,8 +9,6 @@ angular.module('interactomeApp')
 
     });
 
-    console.log($scope.query);
-
-
+    $scope.backClick = function(){ $location.path("/"); }
 });
   
