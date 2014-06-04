@@ -2,18 +2,12 @@
 
 angular.module('interactomeApp')
   .controller('SearchCtrl', function($scope, $location, SearchService, AwsService) {
+    $scope.USER_TYPE = 0;
+    $scope.PAPER_TYPE = 1;
     $scope.selectedAbstracts = [];
     $scope.fetchedResults = [];
-    $scope.paper = {
-        Authors: ["User48044"],
-        Id: "Paper16562",
-        Link: "http://sagebionetworks-interactome-abstracts.s3-us-west-2.amazonaws.com/Abstract16562.json",
-        Title: "Identification of lung cancer biomarkers using lung cancer in female never smokers",
-        authorData: "Yun Park"
-    };
-
     
-    $scope.query = ($location.search()).search;
+    $scope.query = ($location.search()).q;
     SearchService.getResults($scope.query).then(function(data){
         // We check AwsService in case the user refreshed
         AwsService.credentials().then(function() {
@@ -24,13 +18,13 @@ angular.module('interactomeApp')
                 if ($scope.results[i].id.indexOf('User') > -1) {
                     console.log("userfound");
                     AwsService.getSingleUser($scope.results[i].id).then(function(data) {
+                        data.type = $scope.USER_TYPE;
                         $scope.fetchedResults.push(data);
                     });
                 } else if ($scope.results[i].id.indexOf('Paper') > -1) {
                     console.log("paper found");
                     AwsService.getSinglePaper($scope.results[i].id).then(function(data) {
-                        console.log("applying");
-                        console.log(data);
+                        data.type = $scope.PAPER_TYPE;
                         $scope.fetchedResults.push(data);
                     });
                 }
@@ -39,6 +33,6 @@ angular.module('interactomeApp')
         });
     });
 
-    $scope.backClick = function(){ console.log($scope.fetchedResults);}//$location.path("/"); }
+    $scope.backClick = function(){ $location.search('q', null).path("/"); }
 });
   

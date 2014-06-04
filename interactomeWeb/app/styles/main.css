@@ -190,6 +190,9 @@ body {
   margin-top: 7px;
 }
 
+.search-back-btn {
+  margin-bottom: 10px;
+}
 
 /* 
   fade animation for entering and leaving

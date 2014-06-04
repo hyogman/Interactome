@@ -1,12 +1,13 @@
 <!-- Show search results based on query text -->
-<button type="button" class="btn btn-primary" ng-click="backClick()">
+<button type="button" class="btn btn-primary search-back-btn" ng-click="backClick()">
     <span class="glyphicon glyphicon-arrow-left"></span> Back
 </button>
  <ul id="objects" class="list-group"> 
     <div ng-repeat="result in fetchedResults" class="fade-animation">
-        <li class="list-group-item" ng-if="result.Id.indexOf('User') > -1">
+        <<!-- li class="list-group-item" ng-if="result.type == USER_TYPE">
             <h4 class="list-group-item-heading" >{{result.Title + "  " + result.LastName + "  " + result.Id}}</h4>
-        </li>
-        <abstract-list-group-item paper="result" selected-abstracts="selectedAbstracts" ng-if="result.Id.indexOf('Paper') > -1"></abstract-list-group-item>
+        </li> -->
+        <user-list-item user="result" ng=if="result.type == USER_TYPE"></user-list-item>
+        <abstract-list-group-item paper="result" selected-abstracts="selectedAbstracts" ng-if="result.type == PAPER_TYPE"></abstract-list-group-item>
     </div>
 </ul>
