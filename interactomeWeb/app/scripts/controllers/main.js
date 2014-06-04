@@ -37,14 +37,17 @@ app.controller('MainCtrl', function($rootScope, $scope, UserService, AwsService,
     };
     $scope.$watch('currentPage', $scope.paginate);
     $scope.$watch('numPerPage', $scope.paginate);
+    $scope.$on('getRecsFromTopic', function(event, topicspaperslist) {
+        $scope.abstractsRecFromTopic(topicspaperslist);
+    });
 
-    // Determines what happens after one or more abstract is selected
-    $scope.abstractsRec = function() {
-        if ($scope.selectedAbstracts.length > 0) {
+    // Calls RecommendationService for recommendations based off of list of abstracts
+    $scope.abstractsRec = function(paperslist) {
+        if(paperslist.length > 0) {
             //var abstractsChecked = $scope.selectedAbstracts.join();
             //AwsService.postMessageToSNS('arn:aws:sns:us-west-2:005837367462:abstracts_req', abstractsChecked);
-            RecommendationService.getRecs($scope.selectedAbstracts).then(function(paperList) {
-                var temp = $scope.selectedAbstracts.slice(0); // copy array for rec heading
+            RecommendationService.getRecs(paperslist).then(function(reclist) {
+                var temp = paperslist.slice(0); // copy array for rec heading
                 $scope.selectedAbstracts.length = 0;
                 $scope.papers.length = 0;
 
@@ -55,7 +58,7 @@ app.controller('MainCtrl', function($rootScope, $scope, UserService, AwsService,
                     $scope.$apply(function() {
                         $scope.recOriginAbstracts = temp;//updates the text of the abstracttitles directive
                         $scope.gettingAbstractRecs=false;
-                        $scope.papers.push.apply($scope.papers, paperList);
+                        $scope.papers.push.apply($scope.papers, reclist);
 
                         //Pagination
                         $scope.currentPage = 0;
@@ -63,11 +66,20 @@ app.controller('MainCtrl', function($rootScope, $scope, UserService, AwsService,
                         $scope.moreThanOnePage = ($scope.numPerPage < $scope.paginationTotalItems);
                     })
                 });
-                
             });
             // Triggers animation, will happen before .then happens (because of async)
             $scope.gettingAbstractRecs = true;
         }
+    };
+
+    // request for recommendations from selected abstracts
+    $scope.abstractsRecFromSelected = function() {
+        $scope.abstractsRec($scope.selectedAbstracts);
+    };
+
+    // request for recommendations from topics
+    $scope.abstractsRecFromTopic = function(topicspaperslist) {
+        $scope.abstractsRec(topicspaperslist);
     };
 
     // Controls get-recs cancel button behavior. Let's directives know to become unselected.
@@ -77,14 +89,6 @@ app.controller('MainCtrl', function($rootScope, $scope, UserService, AwsService,
         $rootScope.$emit('cancelSelectedAbstracts');
         $scope.selectedAbstracts.length = 0;
     };
-
-    // updates abstract information for modal view
-    $scope.showAbstract = function(abTitle, abAuthor, abText) {
-        $scope.modalTitle = abTitle;
-        $scope.modalAuthor = abAuthor;
-        $scope.modalText = abText;
-        $('#abstractViewModal').modal('show'); // open modal
-    }
 
     // Setup by using AWS credentials
     AwsService.credentials().then(function() {
