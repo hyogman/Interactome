@@ -29,7 +29,6 @@ angular.module('interactomeApp')
                     });
                 }
             }
-            
         });
     });
 

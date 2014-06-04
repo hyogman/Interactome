@@ -4,10 +4,7 @@
 </button>
  <ul id="objects" class="list-group"> 
     <div ng-repeat="result in fetchedResults" class="fade-animation">
-        <<!-- li class="list-group-item" ng-if="result.type == USER_TYPE">
-            <h4 class="list-group-item-heading" >{{result.Title + "  " + result.LastName + "  " + result.Id}}</h4>
-        </li> -->
-        <user-list-item user="result" ng=if="result.type == USER_TYPE"></user-list-item>
+        <user-list-item user="result" selected-abstracts="selectedAbstracts" ng-if="result.type == USER_TYPE"></user-list-item>
         <abstract-list-group-item paper="result" selected-abstracts="selectedAbstracts" ng-if="result.type == PAPER_TYPE"></abstract-list-group-item>
     </div>
 </ul>

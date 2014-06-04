@@ -1,4 +1,4 @@
-<li class="list-group-item clickable-pointer" ng-click="selectedClick()" ng-class="{'abstract-selected': selected}">
+<li class="list-group-item clickable-pointer" ng-click="selectedClick(); $event.stopPropagation();" ng-class="{'abstract-selected': selected}">
     <span ng-transclude></span>
     <button type="button" class="btn btn-primary" name="viewBtn" ng-click="viewAbstract(); $event.stopPropagation();">
         <span class="glyphicon glyphicon-search"></span>

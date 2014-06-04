@@ -1,0 +1,8 @@
+<li class="list-group-item clickable-pointer" ng-click="showAbstracts = !showAbstracts;">
+    <h4 class="list-group-item-heading">{{user.FirstName + " " + user.LastName}}</h4>
+    </br>
+    <div ng-repeat="paper in user.abstracts track by $index" ng-show="showAbstracts">
+        <abstract-list-group-item paper="paper" selected-abstracts="selectedAbstracts"></abstract-list-group-item>
+        </br>
+    </div>
+</li>
