@@ -78,16 +78,15 @@ app.controller('MainCtrl', function($rootScope, $scope, UserService, AwsService,
                         $scope.moreThanOnePage = ($scope.cachable.numPerPage < $scope.paginationTotalItems);
                     })
                 });
-            });
-            
-        });
+            });   
+        }
         // Triggers animation, will happen before .then happens (because of async)
         $scope.gettingAbstractRecs = true;
     };
 
     // request for recommendations from selected abstracts
     $scope.abstractsRecFromSelected = function() {
-        $scope.abstractsRec($scope.selectedAbstracts);
+        $scope.abstractsRec($scope.cachable.selectedAbstracts);
     };
 
     // request for recommendations from topics
