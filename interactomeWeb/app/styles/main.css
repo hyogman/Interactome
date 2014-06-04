@@ -194,6 +194,10 @@ body {
   margin-bottom: 10px;
 }
 
+.user-list-item-heading {
+  padding-bottom: 7px;
+}
+
 /* 
   fade animation for entering and leaving
   Used for recs entering and leaving, and loading leaving

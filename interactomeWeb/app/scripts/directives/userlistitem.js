@@ -11,10 +11,8 @@ angular.module('interactomeApp')
       },
       controller: ['$scope', 'AwsService', function($scope, AwsService) {
         $scope.showAbstracts = false;
+        $scope.clickMsg = "Show abstracts";
         var papLength = $scope.user.Papers.length;
-        $scope.SHOW_ABSTRACTS_MSG = (papLength > 1)? "Click to show " + papLength + " abstracts by this author" : "Click to show the abstract by this author";
-        $scope.HIDE_ABSTRACTS_MSG = (papLength > 1)? "Click to hide " + papLength + " abstracts by this author" : "Click to hide the abstract by this author";
-        $scope.clickMsg = $scope.SHOW_ABSTRACTS_MSG;
 
         $scope.getPapers = function () {
             console.log($scope.user);
@@ -26,10 +24,10 @@ angular.module('interactomeApp')
         $scope.click = function(){
             if($scope.showAbstracts) {
                 $scope.showAbstracts = false;
-                $scope.clickMsg = $scope.SHOW_ABSTRACTS_MSG;
+                $scope.clickMsg = "Show abstracts";
             } else {
                 $scope.showAbstracts = true;
-                $scope.clickMsg = $scope.HIDE_ABSTRACTS_MSG;
+                $scope.clickMsg = "Hide abstracts";
             }
         }
 
