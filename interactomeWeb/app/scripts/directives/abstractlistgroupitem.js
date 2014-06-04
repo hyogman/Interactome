@@ -12,9 +12,10 @@ angular.module('interactomeApp')
   .directive('abstractListGroupItem', function () {
     return {	
       	restrict: 'E',
+        transclude: true,
+        replace: true,
       	scope: {      	
           paper: '=',
-          likeStatus: '=',
           selectedAbstracts: '='
       	},
 		    controller: ['$rootScope', '$scope', '$http', 'AwsService', 'UserService', function($rootScope, $scope, $http, AwsService, UserService) {
@@ -33,22 +34,6 @@ angular.module('interactomeApp')
               }
               $scope.paper.authorData = temp.slice(0, -2);
             });
-          };
-
-          $scope.likeClick = function() {
-            if($scope.likeStatus != true) { // will be undefined on first click which is ok
-              //AwsService.postMessageToSNS('arn:aws:sns:us-west-2:005837367462:abstracts_liked', $scope.paper.Id);
-              $scope.likeStatus = true; // true == liked
-              AwsService.updateDynamoPref($scope.paper.Id, $scope.likeStatus, UserService.currentUsername());
-            }
-          };
-
-          $scope.dislikeClick = function() {
-            if($scope.likeStatus != false) { // will be undefined on first click which is ok
-              //AwsService.postMessageToSNS('arn:aws:sns:us-west-2:005837367462:abstracts_disliked', $scope.paper.Id);
-              $scope.likeStatus = false; // false == disliked
-              AwsService.updateDynamoPref($scope.paper.Id, $scope.likeStatus, UserService.currentUsername());
-            }
           };
 
           $scope.viewAbstract = function() {

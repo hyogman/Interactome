@@ -13,7 +13,9 @@
     </div>
 
     <div ng-repeat="paper in filteredPapers" class="fade-animation">
-        <abstract-list-group-item paper="paper" like-status="cachable.paperLikeStatus[paper.Id]" selected-abstracts="cachable.selectedAbstracts"></abstract-list-group-item>
+      <abstract-list-group-item paper="paper" selected-abstracts="cachable.selectedAbstracts">
+        <like-btns id="{{paper.Id}}" like-status="cachable.paperLikeStatus[paper.Id]"></like-btns>
+      </abstract-list-group-item>
     </div>
 </ul>
 
