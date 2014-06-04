@@ -3,20 +3,10 @@
     <span class="glyphicon glyphicon-arrow-left"></span> Back
 </button>
  <ul id="objects" class="list-group"> 
-    <div ng-repeat="result in results">
-        <li class="list-group-item">
-            <h4 class="list-group-item-heading">{{result.title + "  " + result.lastName + "  " + result.id}}</h4>
-            </li>
-        </div>
-        </ul>
-
-
-
-
-
-
-         
-
-
-
-
+    <div ng-repeat="result in fetchedResults" class="fade-animation">
+        <li class="list-group-item" ng-if="result.Id.indexOf('User') > -1">
+            <h4 class="list-group-item-heading" >{{result.Title + "  " + result.LastName + "  " + result.Id}}</h4>
+        </li>
+        <abstract-list-group-item paper="result" selected-abstracts="selectedAbstracts" ng-if="result.Id.indexOf('Paper') > -1"></abstract-list-group-item>
+    </div>
+</ul>
