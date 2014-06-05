@@ -111,6 +111,11 @@ app.controller('MainCtrl', function($rootScope, $scope, UserService, AwsService,
                     $scope.moreThanOnePage = ($scope.cachable.numPerPage < $scope.paginationTotalItems);
                 });
             });
+        } else {
+            //cache was used
+            $scope.cachable.currentPage = 0;
+            $scope.paginationTotalItems = $scope.cachable.papers.length;
+            $scope.moreThanOnePage = ($scope.cachable.numPerPage < $scope.paginationTotalItems);
         }
     });
 
