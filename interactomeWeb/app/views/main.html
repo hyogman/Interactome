@@ -20,8 +20,8 @@
 </ul>
 
 <!-- Page Pagination -->
-<Pagination class="clickable-pointer" total-items="paginationTotalItems" items-per-page="cachable.numPerPage" page="cachable.currentPage" max-size="maxSize" boundary-links="true" ng-show="moreThanOnePage">
-</pagination>
+<paginate ng-show="moreThanOnePage" total-items="paginationTotalItems" num-per-page="cachable.numPerPage" page="cachable.currentPage" filtered="filteredPapers" non-filtered="cachable.papers">
+</paginate>
 
 <!-- get rec buttons at the bottom of the page -->
 <get-rec-options show-options="cachable.selectedAbstracts.length > 0 && !gettingAbstractRecs" get-recs="abstractsRecFromSelected()" selected="cachable.selectedAbstracts">

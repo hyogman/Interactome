@@ -3,12 +3,16 @@
     <span class="glyphicon glyphicon-arrow-left"></span> Back
 </button>
  <ul id="objects" class="list-group"> 
-    <div ng-repeat="result in fetchedResults" class="fade-animation">
-        <user-list-item user="result" selected-abstracts="selectedAbstracts" ng-if="result.type == USER_TYPE"></user-list-item>
-        <abstract-list-group-item paper="result" selected-abstracts="selectedAbstracts" ng-if="result.type == PAPER_TYPE"></abstract-list-group-item>
+    <div ng-repeat="result in filteredResults" class="fade-animation">
+        <user-list-item user="fetchedResults[result.id]" selected-abstracts="selectedAbstracts" ng-if="fetchedResults[result.id].type == USER_TYPE"></user-list-item>
+        <abstract-list-group-item paper="fetchedResults[result.id]" selected-abstracts="selectedAbstracts" ng-if="fetchedResults[result.id].type == PAPER_TYPE"></abstract-list-group-item>
     </div>
 </ul>
 
 <!-- get rec buttons at the bottom of the page -->
 <get-rec-options show-options="selectedAbstracts.length > 0 && !gettingAbstractRecs" get-recs="getAbstractRecs()" selected="selectedAbstracts">
 </get-rec-options>
+
+<!-- Page Pagination -->
+<paginate ng-show="moreThanOnePage" total-items="totalItems" num-per-page="numPerPage" page="currentPage" filtered="filteredResults" non-filtered="results">
+</paginate>
