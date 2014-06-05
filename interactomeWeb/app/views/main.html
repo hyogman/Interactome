@@ -13,18 +13,16 @@
     </div>
 
     <div ng-repeat="paper in filteredPapers" class="fade-animation">
-        <abstract-list-group-item paper="paper" like-status="cachable.paperLikeStatus[paper.Id]" selected-abstracts="cachable.selectedAbstracts"></abstract-list-group-item>
+      <abstract-list-group-item paper="paper" selected-abstracts="cachable.selectedAbstracts">
+        <like-btns id="{{paper.Id}}" like-status="cachable.paperLikeStatus[paper.Id]"></like-btns>
+      </abstract-list-group-item>
     </div>
 </ul>
 
 <!-- Page Pagination -->
-<Pagination class="clickable-pointer" total-items="paginationTotalItems" items-per-page="cachable.numPerPage" page="cachable.currentPage" max-size="maxSize" boundary-links="true" ng-show="moreThanOnePage">
-</pagination>
+<paginate ng-show="moreThanOnePage" total-items="paginationTotalItems" num-per-page="cachable.numPerPage" page="cachable.currentPage" filtered="filteredPapers" non-filtered="cachable.papers">
+</paginate>
 
-<!-- get rec button that appears at bottom of page -->
-<div class="get-rec-container well" ng-if="cachable.selectedAbstracts.length > 0 && !gettingAbstractRecs">
-    <button type="button" class="btn btn-danger" ng-click="cancelSelectedAbstracts()">
-        <span class="glyphicon glyphicon-remove"></span> Cancel Selection
-    </button>
-    <button id="testSelection" type="button" ng-click="abstractsRecFromSelected()" class="btn btn-primary">Get Recommendations</button>
-</div>
+<!-- get rec buttons at the bottom of the page -->
+<get-rec-options show-options="cachable.selectedAbstracts.length > 0 && !gettingAbstractRecs" get-recs="abstractsRecFromSelected()" selected="cachable.selectedAbstracts">
+</get-rec-options>

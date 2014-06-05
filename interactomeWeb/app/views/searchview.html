@@ -1,21 +1,30 @@
+<p ng-show="totalItems > 0"> {{resultsFoundMsg}}</p>
+<div ng-show="resultsFoundMsg != '' && totalItems == 0" class="alert alert-info"> Sorry no search results were found. Please try again</div>
 <!-- Show search results based on query text -->
- <ul id="objects" class="list-group"> 
-    <div ng-repeat="result in results">
-        <li class="list-group-item">
-            <h4 class="list-group-item-heading">{{result.title + "  " + result.lastName + "  " + result.id}}</h4>
-            </li>
-        </div>
-        </ul>
-
-
-
-
-<button type="button" class="btn btn-primary" ng-click="backClick()">
+<button type="button" class="btn btn-primary search-back-btn" ng-click="backClick()">
     <span class="glyphicon glyphicon-arrow-left"></span> Back
 </button>
+ <ul class="list-group"> 
+  <!-- Loading image/animation for getting recs -->
+    <div class="loader-background loader-fade-animation" ng-if="gettingAbstractRecs">
+        <div class="loader-position-wrap">
+          <div class="loader-inner-blink"></div>
+          <div class="loader-inner-circle"></div>
+          <div class="loader-outer-circular"></div>
+          <div class="loader-outer-circular loader-secondary-circular"></div>
+        </div>
+    </div>
 
-         
+    <div ng-repeat="result in filteredResults" class="fade-animation">
+        <user-list-item user="fetchedResults[result.id]" selected-abstracts="selectedAbstracts" ng-if="fetchedResults[result.id].type == USER_TYPE"></user-list-item>
+        <abstract-list-group-item paper="fetchedResults[result.id]" selected-abstracts="selectedAbstracts" ng-if="fetchedResults[result.id].type == PAPER_TYPE"></abstract-list-group-item>
+    </div>
+</ul>
 
+<!-- get rec buttons at the bottom of the page -->
+<get-rec-options show-options="selectedAbstracts.length > 0 && !gettingAbstractRecs" get-recs="getAbstractRecs()" selected="selectedAbstracts">
+</get-rec-options>
 
-
-
+<!-- Page Pagination -->
+<paginate ng-show="moreThanOnePage" total-items="totalItems" num-per-page="numPerPage" page="currentPage" filtered="filteredResults" non-filtered="results">
+</paginate>

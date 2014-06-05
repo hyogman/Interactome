@@ -36,19 +36,6 @@ app.controller('MainCtrl', function($rootScope, $scope, UserService, AwsService,
     $scope.maxSize = 10;
     $scope.filteredPapers = [];
     
-    $scope.paginate = function() {
-        $('body').animate({scrollTop: 0});
-        // Setting cachable.currentPage to 0 is a hack to get the recs working on page 1.
-        if ($scope.cachable.currentPage == 0)
-            $scope.cachable.currentPage = 1;
-        var begin = (($scope.cachable.currentPage - 1) * $scope.cachable.numPerPage);
-        var end = begin + $scope.cachable.numPerPage;
-        $scope.filteredPapers = $scope.cachable.papers.slice(begin, end);
-    };
-
-    $scope.$watch('cachable.currentPage', $scope.paginate);
-    $scope.$watch('cachable.numPerPage', $scope.paginate);
-
     $scope.$on('getRecsFromTopic', function(event, topicspaperslist) {
         $scope.abstractsRecFromTopic(topicspaperslist);
     });
