@@ -116,4 +116,9 @@ angular.module('interactomeApp')
     $scope.getRecs = function(paperslist) {
         $scope.$broadcast('getRecsFromTopic', paperslist);
     };
+
+    $scope.$on('$locationChangeStart', function(event, next, current) {
+        if(next.indexOf('searchView') == -1)
+            $scope.searchByText = "";
+    });
 });

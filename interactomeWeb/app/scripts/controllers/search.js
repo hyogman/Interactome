@@ -8,7 +8,7 @@ angular.module('interactomeApp')
     $scope.selectedAbstracts = [];
     $scope.fetchedResults = {};
     $scope.gettingAbstractRecs = false;
-
+    $scope.resultsFoundMsg = "";
     //pagination vars
     $scope.filteredResults = [];
     $scope.currentPage = 1;
@@ -22,7 +22,7 @@ angular.module('interactomeApp')
             $scope.response = data;
             $scope.results = $scope.response.response.docs;
             $scope.totalItems = $scope.results.length;
-            
+            $scope.resultsFoundMsg = "" + $scope.results.length + " results found";
             $scope.currentPage = 0;
         });
     });

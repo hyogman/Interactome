@@ -393,13 +393,14 @@ app.provider('AwsService', function() {
                 paperTable.getItem(getParams, function(err, data) {
                     if(err)
                         paperDefer.reject(err);
-                    else
+                    else {
                         paperDefer.resolve({
                             Id: data.Item.Id.S,
                             Authors: (data.Item.Authors.S).split(','),
                             Link: data.Item.Link.S,
                             Title: data.Item.Title.S.replace(/<[b\sB]+>/g, '')
                         });
+                    }
                 });
 
                 return paperDefer.promise;

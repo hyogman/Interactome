@@ -15,7 +15,7 @@ angular.module('interactomeApp')
       controller: ['$scope', function($scope) {
         $scope.paginate = function() {
           // from http://stackoverflow.com/questions/18445590/jquery-animate-stop-scrolling-when-user-scrolls-manually
-          // I'm so sorry - nathan on the eve of projects day
+          // I'm so sorry - Nathan on the eve of projects day
           $("body").bind("scroll mousedown DOMMouseScroll mousewheel keyup", function(){
              $('body').stop();
          });

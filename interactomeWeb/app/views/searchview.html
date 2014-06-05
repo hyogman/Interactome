@@ -1,3 +1,5 @@
+<p ng-show="totalItems > 0"> {{resultsFoundMsg}}</p>
+<div ng-show="resultsFoundMsg != '' && totalItems == 0" class="alert alert-info"> Sorry no search results were found. Please try again</div>
 <!-- Show search results based on query text -->
 <button type="button" class="btn btn-primary search-back-btn" ng-click="backClick()">
     <span class="glyphicon glyphicon-arrow-left"></span> Back
@@ -12,7 +14,7 @@
           <div class="loader-outer-circular loader-secondary-circular"></div>
         </div>
     </div>
-    
+
     <div ng-repeat="result in filteredResults" class="fade-animation">
         <user-list-item user="fetchedResults[result.id]" selected-abstracts="selectedAbstracts" ng-if="fetchedResults[result.id].type == USER_TYPE"></user-list-item>
         <abstract-list-group-item paper="fetchedResults[result.id]" selected-abstracts="selectedAbstracts" ng-if="fetchedResults[result.id].type == PAPER_TYPE"></abstract-list-group-item>
