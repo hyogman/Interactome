@@ -6,6 +6,7 @@ angular.module('interactomeApp')
     $scope.PAPER_TYPE = 1;
     $scope.selectedAbstracts = [];
     $scope.fetchedResults = [];
+    $scope.gettingAbstractRecs = false;
     
     $scope.query = ($location.search()).q;
     SearchService.getResults($scope.query).then(function(data){
@@ -32,6 +33,11 @@ angular.module('interactomeApp')
         });
     });
 
-    $scope.backClick = function(){ $location.search('q', null).path("/"); }
+    $scope.backClick = function(){ $location.search('q', null).path("/"); };
+
+    $scope.getAbstractRecs = function(){
+        console.log($scope.selectedAbstracts);
+        //do animation here
+    };
 });
   

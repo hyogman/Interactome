@@ -15,7 +15,6 @@ angular.module('interactomeApp')
         var papLength = $scope.user.Papers.length;
 
         $scope.getPapers = function () {
-            console.log($scope.user);
             AwsService.getBatchPaper($scope.user.Papers).then(function(data) {
                 $scope.user.abstracts = data;
             });

@@ -8,3 +8,7 @@
         <abstract-list-group-item paper="result" selected-abstracts="selectedAbstracts" ng-if="result.type == PAPER_TYPE"></abstract-list-group-item>
     </div>
 </ul>
+
+<!-- get rec buttons at the bottom of the page -->
+<get-rec-options show-options="selectedAbstracts.length > 0 && !gettingAbstractRecs" get-recs="getAbstractRecs()" selected="selectedAbstracts">
+</get-rec-options>
