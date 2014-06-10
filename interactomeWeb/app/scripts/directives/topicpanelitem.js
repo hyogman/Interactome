@@ -13,11 +13,11 @@ angular.module('interactomeApp')
           localCheckTopic: '&checkTopic',
           localRenameTopic: '&renameTopic',
           localDeleteTopic: '&delete',
+          localGetRecs: '&getRecs',
       		topic: '='
       	},
 
-		    controller: ['$scope', 'AwsService', function($scope, AwsService) {          
-          $scope.scopePapersList = [];
+		    controller: ['$rootScope', '$scope', '$http', 'AwsService', function($rootScope, $scope, $http, AwsService) {    
           $scope.editorEnabled = false;
           $scope.noAbstracts = null;
           $scope.editableValue = $scope.topic.Name;          
@@ -52,10 +52,9 @@ angular.module('interactomeApp')
           // delete a topic
           $scope.delete = function() {
             var scope = $scope;
-            $scope.localDeleteTopic({topicId: scope.topic.Id});
-            if($scope.scopePapersList.length > 1 || $scope.scopePapersList.length == 1 && $scope.scopePapersList[0] != $scope.placeHolder) { // contains saved papers
+            if($scope.topic.PapersList.length > 0) { // contains saved papers
 
-              var al = 'There are ' + $scope.scopePapersList.length + ' abstracts in "' + scope.topic.Name +
+              var al = 'There are ' + $scope.topic.PapersList.length + ' abstracts in "' + scope.topic.Name +
               '". Deleting this topic will also delete the abstracts. Confirm deletion.';
 
               var confirmation = confirm(al);
@@ -81,37 +80,43 @@ angular.module('interactomeApp')
             var scope = $scope;
             var exists = false;
 
-            var curLength = scope.scopePapersList.length;
+            var curLength = scope.topic.PapersList.length;
             
             for(var i = 0; i < curLength; i++) { // see if paper already exists
-              if (scope.scopePapersList[i] == paperid) {
+              if(scope.topic.PapersList[i].Id == paperid) {
                 exists = true;
                 break;
               }
             }
-            if(!exists) { // found paper
+
+            if(!exists) { // paper doesn't exist
               AwsService.saveTopicPaper($scope.topic.Id, paperid).then(function() { // call to dynamo
-                if(curLength == 0) {
-                  scope.scopePapersList = [paperid];
-                }
-                else {
-                  scope.scopePapersList.push(paperid);
-                }
+                AwsService.getBatchPaper([paperid]).then(function(papers) { // this gets attributes
+                  if(curLength == 0) {
+                    scope.topic.PapersList = papers; 
+                  }
+                  else {
+                    scope.topic.PapersList.push(papers[0]); 
+                  }
+
+                  $scope.noAbstracts = false;
+                }, function(reason) {
+                  alert(reason);
+                });
+
               }, function(reason) {
                 alert(reason);
               });
             }
 
-            $scope.noAbstracts = false;
-            $scope.$apply();
           };
 
           // delete a paper from a topic
-          $scope.deletePaper = function(paperid, index) {
+          $scope.deletePaper = function(paper, index) {
             var scope = $scope;
-            AwsService.deleteTopicPaper($scope.topic.Id, paperid).then(function() { // call to dynamo
-              scope.scopePapersList.splice(index, 1);
-              var curLength = scope.scopePapersList.length;
+            AwsService.deleteTopicPaper($scope.topic.Id, paper.Id).then(function() { // call to dynamo
+              scope.topic.PapersList.splice(index, 1);
+              var curLength = scope.topic.PapersList.length;
               if(curLength == 0) { // this was the only saved paper
                 scope.noAbstracts = true;
               }
@@ -119,16 +124,38 @@ angular.module('interactomeApp')
               alert(reason);
             });
           };
+
+          $scope.viewAbstract = function(paper) {
+            $rootScope.$emit('showModal', paper);
+          };
+
+          $scope.getRecs = function() {
+            $scope.localGetRecs({paperslist: $scope.topic.PapersList}); 
+          };
+
+          // replaces PapersList with a list of objects that has attributes for each paper
+          // should be called once from the link function
+          $scope.getPapers = function() {
+            if('PapersList' in $scope.topic) {
+                var scope = $scope;
+                AwsService.getBatchPaper(scope.topic.PapersList).then(function(papers) { // get the attributes
+                    scope.topic.PapersList = papers;
+                }, function(reason) {
+                    alert(reason);
+                });   
+            }
+          };
+
     	}],
       templateUrl: 'scripts/directives/topicpanelitem.html',
       link: function (scope, element, attrs) {
         if('PapersList' in scope.topic) {
-          scope.scopePapersList = scope.topic.PapersList;
-          scope.scopePapersList.sort();
+          scope.topic.PapersList.sort();
+          scope.getPapers();
           scope.noAbstracts = false;
         }
         else {
-          scope.scopePapersList = [];
+          scope.topic.PapersList = [];
           scope.noAbstracts = true;
         }
 
@@ -140,6 +167,7 @@ angular.module('interactomeApp')
           hoverClass: "ui-state-highlight", 
 
         });// http://codepen.io/m-e-conroy/pen/gwbqG shows that all I really had to add was replace!
+
       }
     };
   }); 

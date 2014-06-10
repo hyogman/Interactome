@@ -1,23 +1,4 @@
-<!-- modal to be bootstrapped for abstract views -->
-<div class="modal fade" id="abstractViewModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
-                    <span class="glyphicon glyphicon-remove"></span>
-                </button>
-                <h4 class="modal-title" id="myModalLabel" ng-bind-html="modalTitle"></h4>
-                <h5 class="modal-title" id="myModalAuthor">{{modalAuthor}}</h5>
-            </div>
-            <div class="modal-body" ng-bind-html="modalText"></div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-default btn-lg btn-block" data-dismiss="modal">Close</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-<collapsable-abstract-titles papers="recOriginAbstracts"></collapsable-abstract-titles>
+<collapsable-abstract-titles papers="cachable.recOriginAbstracts"></collapsable-abstract-titles>
 
 <!-- see main.js and abstractlistgroupitem.js -->
 <ul id="abstracts" class="list-group">
@@ -32,18 +13,16 @@
     </div>
 
     <div ng-repeat="paper in filteredPapers" class="fade-animation">
-        <abstract-list-group-item paper="paper" like-status="paperLikeStatus[paper.Id]" on-view="showAbstract(abTitle, abAuthor, abText)" selected-abstracts="selectedAbstracts"></abstract-list-group-item>
+      <abstract-list-group-item paper="paper" selected-abstracts="cachable.selectedAbstracts">
+        <like-btns id="{{paper.Id}}" like-status="cachable.paperLikeStatus[paper.Id]"></like-btns>
+      </abstract-list-group-item>
     </div>
 </ul>
 
 <!-- Page Pagination -->
-<Pagination class="clickable-pointer" total-items="paginationTotalItems" items-per-page="numPerPage" page="currentPage" max-size="maxSize" boundary-links="true" ng-show="moreThanOnePage">
-</pagination>
+<paginate ng-show="moreThanOnePage" total-items="paginationTotalItems" num-per-page="cachable.numPerPage" page="cachable.currentPage" filtered="filteredPapers" non-filtered="cachable.papers">
+</paginate>
 
-<!-- get rec button that appears at bottom of page -->
-<div class="get-rec-container well" ng-if="selectedAbstracts.length > 0 && !gettingAbstractRecs">
-    <button type="button" class="btn btn-danger" ng-click="cancelSelectedAbstracts()">
-        <span class="glyphicon glyphicon-remove"></span> Cancel Selection
-    </button>
-    <button id="testSelection" type="button" ng-click="abstractsRec()" class="btn btn-primary">Get Recommendations</button>
-</div>
+<!-- get rec buttons at the bottom of the page -->
+<get-rec-options show-options="cachable.selectedAbstracts.length > 0 && !gettingAbstractRecs" get-recs="abstractsRecFromSelected()" selected="cachable.selectedAbstracts">
+</get-rec-options>

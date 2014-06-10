@@ -14,10 +14,10 @@ angular.module('interactomeApp')
 .directive('abstractListGroupItem', function() {
     return {
         restrict: 'E',
+        transclude: true,
+        replace: true,
         scope: {
-            localOnView: '&onView',
             paper: '=',
-            likeStatus: '=',
             selectedAbstracts: '='
         },
         controller: ['$rootScope', '$scope', '$http', 'AwsService', 'UserService',
@@ -35,51 +35,12 @@ angular.module('interactomeApp')
                                     temp += (names[i].FirstName + " " + names[i].LastName + ", ");
                             }
                         }
-                        $scope.authorData = temp.slice(0, -2);
+                        $scope.paper.authorData = temp.slice(0, -2);
                     });
                 };
 
-                $scope.likeClick = function() {
-                    if ($scope.likeStatus != true) { // will be undefined on first click which is ok
-                        //AwsService.postMessageToSNS('arn:aws:sns:us-west-2:005837367462:abstracts_liked', $scope.paper.Id);
-                        $scope.likeStatus = true; // true == liked
-                        AwsService.updateDynamoPref($scope.paper.Id, $scope.likeStatus, UserService.currentUsername());
-                    }
-                };
-
-                $scope.dislikeClick = function() {
-                    if ($scope.likeStatus != false) { // will be undefined on first click which is ok
-                        //AwsService.postMessageToSNS('arn:aws:sns:us-west-2:005837367462:abstracts_disliked', $scope.paper.Id);
-                        $scope.likeStatus = false; // false == disliked
-                        AwsService.updateDynamoPref($scope.paper.Id, $scope.likeStatus, UserService.currentUsername());
-                    }
-                };
-
                 $scope.viewAbstract = function() {
-                    // Only grabs from s3 once
-                    if ($scope.s3Data === undefined) {
-                        $http.get($scope.paper.Link).success(function(data) {
-                            $scope.s3Data = data;
-
-                            $scope.localOnView({
-                                abTitle: $scope.s3Data.AbstractTitle,
-                                abAuthor: $scope.authorData,
-                                abText: $scope.s3Data.Abstract
-                            });
-
-                        }).error(function() {
-                            $scope.localOnView({
-                                abTitle: "ERROR",
-                                abText: "Could not find abstract."
-                            });
-                        })
-                    } else {
-                        $scope.localOnView({
-                            abTitle: $scope.s3Data.AbstractTitle,
-                            abAuthor: $scope.authorData,
-                            abText: $scope.s3Data.Abstract
-                        });
-                    }
+                    $rootScope.$emit('showModal', $scope.paper);
                 };
 
                 $scope.selectedClick = function() {
@@ -118,5 +79,6 @@ angular.module('interactomeApp')
                 }
             }).data("abId", $scope.paper.Id);
         }
+
     };
 });

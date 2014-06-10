@@ -382,7 +382,72 @@ app.provider('AwsService', function() {
                 return paperDefer.promise;
             },
 
+            getSinglePaper: function(id) {
+                var paperDefer = $q.defer();
+                var paperTable = new AWS.DynamoDB({ params: { TableName: 'Paper' } });
+
+                var getParams = {
+                    Key: { "Id": { "S": id } }
+                };
+                
+                paperTable.getItem(getParams, function(err, data) {
+                    if(err)
+                        paperDefer.reject(err);
+                    else {
+                        paperDefer.resolve({
+                            Id: data.Item.Id.S,
+                            Authors: (data.Item.Authors.S).split(','),
+                            Link: data.Item.Link.S,
+                            Title: data.Item.Title.S.replace(/<[b\sB]+>/g, '')
+                        });
+                    }
+                });
+
+                return paperDefer.promise;
+            },
+
+            // Get papers and all their attributes by Ids
+            getBatchPaper: function(Ids) {
+                var batchPaperDefer = $q.defer();
+                var papers = [];
+                var dynamodb = new AWS.DynamoDB();
+                 
+                var batchParams = {
+                    RequestItems:
+                    {
+                        Paper: {
+                            AttributesToGet: ['Id','Authors','Link', 'Title'],
+                            Keys: []
+                        }
+                    }
+                };
+
+                for(var i = 0; i < Ids.length; i++){
+                    batchParams.RequestItems.Paper.Keys.push({"Id": {"S": Ids[i]}});
+                }
+
+                dynamodb.batchGetItem(batchParams, function(err, data) { 
+                    if (err) { 
+                        console.log(err, err.stack);
+                        batchPaperDefer.reject('Cannot query Paper table');
+                    } else{
+                        for (var i = 0; i < data.Responses.Paper.length; i++) {
+                            papers.push({ 
+                                Id: data.Responses.Paper[i].Id.S,
+                                Authors: (data.Responses.Paper[i].Authors.S).split(','),
+                                Link: data.Responses.Paper[i].Link.S,
+                                Title: data.Responses.Paper[i].Title.S.replace(/<[b\sB]+>/g, '')
+                            });
+                        }
+                        batchPaperDefer.resolve(papers);
+                    }
+                });
+
+                return batchPaperDefer.promise;
+            },
+
             // Get users by a list of their Ids.
+            // Returns only names, not what they authored
             getBatchUser: function(Ids) {
                 var batchUserDefer = $q.defer();
                 var names = [];
@@ -405,7 +470,7 @@ app.provider('AwsService', function() {
                 dynamodb.batchGetItem(batchParams, function(err, data) {
                     if (err) { // query error
                         console.log(err, err.stack);
-                        topicDefer.reject('Cannot query Topic table');
+                        batchUserDefer.reject('Cannot query User table');
                     } else{
                         for (var i = 0; i < data.Responses.User.length; i++) {
                             names.push({ 
@@ -416,9 +481,32 @@ app.provider('AwsService', function() {
                         batchUserDefer.resolve(names);
                     }
                 });
-
                 return batchUserDefer.promise;
 
+            },
+
+            getSingleUser: function(id) {
+                var userDefer = $q.defer();
+                var userTable = new AWS.DynamoDB({ params: { TableName: 'User' } });
+
+                var getParams = {
+                    Key: { "Id": { "S": id } }
+                };
+                
+                userTable.getItem(getParams, function(err, data) {
+                    if(err)
+                        userDefer.reject(err);
+                    else
+                        userDefer.resolve({
+                            Id: data.Item.Id.S,
+                            FirstName: data.Item.FirstName.S,
+                            LastName: data.Item.LastName.S,
+                            Institution: data.Item.Institution.S,
+                            Papers: data.Item.Papers.SS
+                        });
+                });
+
+                return userDefer.promise;
             },
 
             // General way to post a msg to a topic.
@@ -532,55 +620,3 @@ app.provider('AwsService', function() {
         } // end of return 
     }
 });
-
-app.factory('SearchService', function($q) {
-
-    // factory returns entire service as object 
-    return {
-        showResults: function(institution) {
-            var results = institution;
-            var defered = $q.defer(); // set up defered for asyncronous calls to Dynamo 
-
-            var userTable = new AWS.DynamoDB();
-            // Set params for query 
-            var params = {
-                TableName: 'User',
-                IndexName: 'InstitutionName-index',
-                KeyConditions: {
-                    "InstitutionName": {
-                        "AttributeValueList": [{
-
-
-                            "S": results
-
-                        }],
-
-                        ComparisonOperator: "EQ"
-                    }
-                }
-            };
-
-            var userData = [];
-            // run query 
-            userTable.query(params, function(err, data) {
-                if (err) {
-
-                    console.log(err);
-                } else {
-
-                    for (var i = 0; i < data.Items.length; i++) {
-
-                        userData.push(data.Items[i]);
-                    }
-
-                    // resolve defered 
-                    defered.resolve(userData);
-
-                }
-            });
-            // return promise 
-            return defered.promise;
-        },
-    };
-});
-
