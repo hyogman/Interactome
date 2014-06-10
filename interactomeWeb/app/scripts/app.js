@@ -26,7 +26,6 @@ app.config(['$httpProvider',
     }
 ]);
 
-
 // Sets up main route to main.html when page is first loaded. 
 app.config(
     function($routeProvider, $locationProvider) {
